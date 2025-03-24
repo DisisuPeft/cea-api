@@ -131,9 +131,9 @@ WSGI_APPLICATION = "diplomadosAPI.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "center_db_test",
-        "USER": "root",
-        "PASSWORD": "",
+        "NAME": "cea_db_test",
+        "USER": "localdb",
+        "PASSWORD": "@dm1n123",
         "HOST": "localhost",
         "PORT": "3306",
     }

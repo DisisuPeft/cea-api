@@ -7,11 +7,13 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from rest_framework import exceptions
 from myapps.configuracion.models import MenuItems
+from myapps.authentication.serializers import RoleCustomizeSerializer
 
 class MenuItemSerializer(serializers.ModelSerializer):
+    role = RoleCustomizeSerializer(many=True, required=False)
     class Meta:
         model = MenuItems
-        fields = ["id", "name", "description", "icon", "itemCount", "bgColor", "textColor"]
+        fields = ["id", "name", "description", "icon", "itemCount", "bgColor", "textColor", "route", "role"]
 # class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 #     username_field = 'email'
 

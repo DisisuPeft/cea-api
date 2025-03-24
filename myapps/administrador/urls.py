@@ -7,9 +7,9 @@ from .views import (
 
 urlpatterns = [
 
-    path('admin/usuarios/', UsuariosAdministrador.as_view(), name="get"),
-    path('admin/usuarios/editar/', UsuariosAdministrador.as_view(), name="patch"),
-    path('admin/usuarios/crear/', UsuariosAdministrador.as_view(), name="post"),
+    path('cea/usuarios/', UsuariosAdministrador.as_view(), name="get"),
+    path('cea/usuarios/editar/', UsuariosAdministrador.as_view(), name="patch"),
+    path('cea/usuarios/crear/', UsuariosAdministrador.as_view(), name="post"),
     # path('auth/refresh/', CustomTokenRefreshView.as_view()),
     # path('auth/verify/', CustomTokenVerifyView.as_view()),
     # path('auth/register/', RegisterView.as_view()),

@@ -107,3 +107,4 @@ class Matriculas(models.Model):
     ciclo = models.ForeignKey(Ciclos, related_name="ciclo_matricula", on_delete=models.CASCADE)
     grado = models.ForeignKey(Grados, on_delete=models.CASCADE, related_name="grado_matricula")
     state = models.BigIntegerField()
+    

@@ -25,12 +25,12 @@ class UsuariosAdministrador(APIView):
     
         if not usuarios.exists():
             return Response(
-                {"error": "No se encontraron otros usuarios"}, 
+                "No existen usuarios", 
                 status=status.HTTP_404_NOT_FOUND
             )
     
         serializer = UserCustomizeSerializer(usuarios, many=True)
-        return Response({"users": serializer.data}, status=status.HTTP_200_OK)  
+        return Response(serializer.data, status=status.HTTP_200_OK)  
     
     
     def post(self, request, *args, **kwargs):

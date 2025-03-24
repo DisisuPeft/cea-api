@@ -1,13 +1,29 @@
 from rest_framework import serializers
-from myapps.perfil.models import Profile
+from myapps.perfil.models import (Profile, Genero, NivelEducativo)
 # from myapps.authentication.serializers import UserCustomizeSerializer
-
+class GeneroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genero
+        fields = ["id", "name"]
+        
+class NivelEducativoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NivelEducativo
+        fields = ["id", "name"]
 class ProfileSerializer(serializers.ModelSerializer):
     # user = serializers.IntegerField(write_only=True, required=False)
+    genero = GeneroSerializer(required=False)
+    nivEdu = NivelEducativoSerializer(required=False)
     class Meta:
         model = Profile
         fields = ["nombre", "apellidoP", "apellidoM", "edad", "fechaNacimiento", "genero", "nivEdu", "telefono", "user"]
         extra_kwargs = {field: {'required': False} for field in fields}
+        
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.fechaNacimiento:
+            data["fechaNacimiento"] = instance.fechaNacimiento.strftime("%d/%m/%Y")
+        return data    
         # extra_kwargs = {
         #     'edad': {'required': False, 'allow_null': True},
         #     'fechaNacimiento': {'required': False, 'allow_null': True},
