@@ -134,9 +134,8 @@ class UsuariosAdministrador(APIView):
         profile_serializer = ProfileSerializer(
             profile, 
             data=profile_data, 
-            partial=True  # Permite actualizaciones parciales
-        )
-        
+            partial=True  
+        )   
         try:
         #     # Validar y guardar
             # if user_data:
