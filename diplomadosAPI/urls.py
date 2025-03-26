@@ -27,5 +27,6 @@ urlpatterns = [
     path('api/', include('myapps.perfil.urls')),
     path('api/', include('myapps.cursos.urls')),
     path('api/', include('myapps.configuracion.urls')),
+    path('api/', include('myapps.centro_educativo.urls'))
     # path('perfil', perfil_views.getprofile, name='perfil'),
 ]
