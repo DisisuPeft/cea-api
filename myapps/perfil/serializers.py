@@ -1,15 +1,10 @@
 from rest_framework import serializers
 from myapps.perfil.models import (Profile, Genero, NivelEducativo)
+from myapps.catalogos.serializers import NivelEducativoSerializer, GeneroSerializer
 # from myapps.authentication.serializers import UserCustomizeSerializer
-class GeneroSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genero
-        fields = ["id", "name"]
+
         
-class NivelEducativoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = NivelEducativo
-        fields = ["id", "name"]
+        
 class ProfileSerializer(serializers.ModelSerializer):
     # user = serializers.IntegerField(write_only=True, required=False)
     genero = GeneroSerializer(required=False)

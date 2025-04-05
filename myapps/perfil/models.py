@@ -1,13 +1,9 @@
 from django.db import models
 from django.db.models import OneToOneField
 from django.db.models.fields.related import ForeignKey
-# Create your models here.
-
-class Genero(models.Model):
-    name = models.CharField(max_length=50)
-    
-class NivelEducativo(models.Model):
-    name = models.CharField(max_length=50)
+from myapps.catalogos.models.genero import Genero
+from myapps.catalogos.models.niveleducativo import NivelEducativo
+# Create your models here.    
     
 class Profile(models.Model):
     nombre = models.CharField(max_length=100)
@@ -19,3 +15,4 @@ class Profile(models.Model):
     nivEdu = models.ForeignKey(NivelEducativo, on_delete=models.CASCADE, null=True)  # Permitir valores nulos
     telefono = models.CharField(max_length=15, null=True)
     user = OneToOneField('authentication.UserCustomize', on_delete=models.SET_NULL, related_name='profile', null=True)
+    
