@@ -87,7 +87,7 @@ INSTALLED_APPS = [
     "myapps.examenes",
     "myapps.maestros",
     "myapps.estudiantes",
-    "myapps.control_escolar",    
+    "myapps.control_escolar"
 ]
 
 MIDDLEWARE = [

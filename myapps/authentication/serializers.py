@@ -20,20 +20,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             if not user.is_active:
                 raise exceptions.AuthenticationFailed('User is deactivated')
 
-
-class RoleCustomizeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Roles
-        fields = ["id", "name"]
-
-        def create(self, validated_data):
-            role = Roles.objects.create(
-                name=validated_data['name'],
-            )
-            role.save()
-            return role
-
-
 class PermissionCustomizeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permissions
@@ -44,6 +30,21 @@ class PermissionCustomizeSerializer(serializers.ModelSerializer):
             )
             permission.save()
             return permission
+        
+class RoleCustomizeSerializer(serializers.ModelSerializer):
+    #si  no aparece revisar como quedo el related 
+    permission = PermissionCustomizeSerializer(required=False, many=True)
+    class Meta:
+        model = Roles
+        fields = ["id", "name", "permission"]
+
+        def create(self, validated_data):
+            role = Roles.objects.create(
+                name=validated_data['name'],
+            )
+            role.save()
+            return role
+
 
 class UserCustomizeSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(required=False) #para que me devuelva al usuario

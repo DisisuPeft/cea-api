@@ -16,22 +16,10 @@ from rest_framework.exceptions import PermissionDenied
     #     # Devuelve una instancia de HasRole con los roles permitidos
     #     return cls(allowed_roles)
 class HasRole(BasePermission):
-    # allowed_roles = []
-
-    # def __init__(self, allowed_roles=None):
-    #     if allowed_roles is not None:
-    #         self.allowed_roles = allowed_roles
-
-    # def has_permission(self, request, view):
-    #     user = request.user
-    #     if not user or not user.is_authenticated:
-    #         return False
-    #     return user.roleID.filter(name__in=self.allowed_roles).exists()
     allowed_roles = []
 
     def __init__(self, allowed_roles=None):
-        if allowed_roles is not None:
-            self.allowed_roles = allowed_roles
+        self.allowed_roles = allowed_roles or []
 
     def has_permission(self, request, view):
         user = request.user
@@ -39,8 +27,7 @@ class HasRole(BasePermission):
             raise PermissionDenied("El usuario no está autenticado.")
         
         if not user.roleID.filter(name__in=self.allowed_roles).exists():
-            # print(user.roleID)
-            raise PermissionDenied(f"El usuario no tiene los roles requeridos") #{', '.join(self.allowed_roles)}.
+            raise PermissionDenied(f"El usuario no tiene los roles requeridos")
         
         return True
 
@@ -52,5 +39,3 @@ def HasRoleWithRoles(allowed_roles):
 
     return CustomHasRole
 
-
-#revisar mas como funciona

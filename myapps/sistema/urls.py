@@ -1,7 +1,7 @@
 from django.urls import path, re_path
 from .views import (
     # CustomProviderAuthView,
-    MenuItemview
+    Modulosview, TabsView
 )
 
 urlpatterns = [
@@ -10,7 +10,8 @@ urlpatterns = [
     #     CustomProviderAuthView.as_view(),
     #     name='provider-auth'
     # ),
-    path("menu/all/", MenuItemview.as_view(), name="get"),
+    path("menu/all/", Modulosview.as_view(), name="get"),
+    path("tabs/all/", TabsView.as_view(), name="get")
     # path("auth/refresh/", CustomTokenRefreshView.as_view()),
     # path("auth/verify/", CustomTokenVerifyView.as_view()),
     # path("auth/register/", RegisterView.as_view()),

@@ -11,3 +11,5 @@ class Modulos(models.Model):
     textColor = models.CharField(max_length=20)
     route = models.CharField(max_length=50, null=True, blank=True)
     role = models.ManyToManyField(Roles, related_name='menu_items', null=True, blank=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)

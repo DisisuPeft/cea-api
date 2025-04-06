@@ -2,7 +2,7 @@ from django.shortcuts import render
 from contextvars import Token
 
 from myapps.authentication.manager import CustomUserManager
-from myapps.authentication.models import UserCustomize as User
+from myapps.authentication.models import UserCustomize as User, Permissions
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator  # importante
 from django.shortcuts import render
@@ -25,21 +25,37 @@ from django.conf import settings
 from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
-from myapps.sistema.models import Modulos
-from myapps.sistema.serializers import MenuItemSerializer
+from myapps.sistema.models import Modulos, TabsModulo
+from myapps.sistema.serializers import ModulosSerializer, TabsModuloSerializer
 # Create your views here.
 
-class MenuItemview(APIView):
-    permission_classes = [HasRoleWithRoles(["Administrador", "Docente", ]),  IsAuthenticated]
+class Modulosview(APIView):
+    permission_classes = [IsAuthenticated]
     authentication_classes = [CustomJWTAuthentication]
     
     def get(self, request, *args, **kwargs):
-        menuItem = Modulos.objects.all()
-        if not menuItem:
-            return Response("Error al obtener el menu, verificar si los modulos existen", status=status.HTTP_404_NOT_FOUND)
-        serializer = MenuItemSerializer(menuItem, many=True)
+        # user = request.user.roleID.all()
+        # print(user)
+        modulos = Modulos.objects.filter(role__in=request.user.roleID.all()).distinct()
+        if not modulos:
+            return Response("Error al obtener el menu, verificar si existen", status=status.HTTP_404_NOT_FOUND)
+        serializer = ModulosSerializer(modulos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        
+   
+class TabsView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]  
+    
+    def get(self, request):
+        rols = request.user.roleID.all()
+        permisos = Permissions.objects.filter(permission__in=rols).distinct()
+        tabs = TabsModulo.objects.filter(permiso__in=permisos)
+        print(permisos)
+        if not tabs:
+            return Response("Error al obtener el menu, verificar si existen", status=status.HTTP_404_NOT_FOUND)
+        serializer = TabsModuloSerializer(tabs, many=True)
+        # print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 

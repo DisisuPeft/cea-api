@@ -23,7 +23,7 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     # path('register', auth_views.register, name='register'),
     path('api/', include('myapps.authentication.urls')),
-    path('api/', include('myapps.administrador.urls')),
+    path('api/', include('myapps.sistema.urls')),
     path('api/', include('myapps.perfil.urls')),
     # path('api/', include('myapps.cursos.urls')),
     # path('api/', include('myapps.configuracion.urls')),

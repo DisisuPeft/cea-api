@@ -5,8 +5,12 @@ from django.db.models.fields.related import ForeignKey
 from myapps.authentication.manager import CustomUserManager
 from myapps.perfil.models import Profile
 
+class Permissions(models.Model):
+    name = models.CharField(max_length=10, unique=True)
+    
 class Roles(models.Model):
     name = models.CharField(max_length=20, unique=True)
+    permission = models.ManyToManyField(Permissions, related_name='permission')
     def __str__(self):
         return self.name
 
@@ -39,8 +43,3 @@ class UserCustomize(AbstractUser):
     def __str__(self):
         return self.email
 
-
-
-class Permissions(models.Model):
-    name = models.CharField(max_length=10, unique=True)
-    role = models.ManyToManyField(Roles, related_name='permission')
