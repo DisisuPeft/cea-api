@@ -14,8 +14,8 @@ from myapps.authentication.serializers import UserCustomizeSerializer
 from rest_framework import generics, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-from myapps.perfil.serializers import ProfileSerializer
-from myapps.perfil.models import Profile
+from myapps.perfil.serializer import ProfileSerializer
+# from myapps.perfil.models import User
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -27,59 +27,6 @@ from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 
 # Create your views here.
-
-
-# @api_view(['POST'])
-# @permission_classes([AllowAny])
-# def register(request):
-#     if request.data['password'] != request.data['password_confirmation']:
-#         return Response({"error": "Las contraseñas no coinciden"}, status=status.HTTP_400_BAD_REQUEST)
-
-#     user_serializer = UserCustomizeSerializer(
-#         data={'email': request.data['email'], 'password': request.data['password'], 'role': request.data['role']} #aqui debo poner por defecto 3
-#     )
-#     #
-#     if user_serializer.is_valid():
-#         # print("we here")
-#         user = user_serializer.save()
-#         profile_data = {
-#             'nombre': request.data['nombre'],
-#             'apellidoP': request.data['apellidoP'],
-#             'user': user.id,
-#         }
-#         profile_serializer = ProfileSerializer(data=profile_data)
-#         if profile_serializer.is_valid():
-#             profile_serializer.save()
-#             return Response({"message": "Usuario creado con exito. Inicia sesión para continuar"}, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(profile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#     else:
-#         # print(user_serializer.errors)
-#         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-# @api_view(['POST'])
-# @permission_classes([AllowAny])
-# def login(request):
-#     email = request.data['email']
-#     password = request.data['password']
-
-#     if email is None or password is None:
-#         return Response({"message": "Por favor, proporciona un email y una contraseña."},
-#                         status=status.HTTP_400_BAD_REQUEST)
-#     if not User.objects.filter(email=email).exists():
-#         return Response({"message": "Usuario no encontrado."},
-#                         status=status.HTTP_400_BAD_REQUEST)
-
-#     user = User.objects.get(email=email)
-
-#     if not user.check_password(request.data['password']):
-#         return Response({"message": "La contraseña es incorrecta."},
-#                         status=status.HTTP_400_BAD_REQUEST)
-
-#     token = RefreshToken.for_user(user)
-#     s = UserCustomizeSerializer(user)
-
-#     return Response({'token': str(token.access_token), 'refreshToken': str(token), 'user': s.data}, status=status.HTTP_200_OK)
-
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
@@ -134,44 +81,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    # def post(self, request, *args, **kwargs):
-    #     # print(request._authenticate)
-    #     response = super().post(request, *args, **kwargs)
-    #     print(response)
-    # if response.status_code == 200:
-    #     access_token = response.data.get('access')
-    #     refresh_token = response.data.get('refresh')
-    # print(f"Access Token: {access_token}")
-    # print(f"Refresh Token: {refresh_token}")
-    # response.set_cookie(
-    #     'access',
-    #     access_token,
-    #     max_age=settings.AUTH_COOKIE_MAX_AGE,
-    #     path=settings.AUTH_COOKIE_PATH,
-    #     secure=settings.AUTH_COOKIE_SECURE,
-    #     httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-    #     samesite=settings.AUTH_COOKIE_SAMESITE
-    # )
-    # response.set_cookie(
-    #     'refresh',
-    #     refresh_token,
-    #     max_age=settings.AUTH_COOKIE_MAX_AGE,
-    #     path=settings.AUTH_COOKIE_PATH,
-    #     secure=settings.AUTH_COOKIE_SECURE,
-    #     httponly=settings.AUTH_COOKIE_HTTP_ONLY,
-    #     samesite=settings.AUTH_COOKIE_SAMESITE
-    # )
-    # else:
-    # print(response)
-    # if response.status_code == status.HTTP_401_UNAUTHORIZED:
-    #     response.data = {
-    #         'error': 'Por favor, verifica tu email y contraseña.'
-    #     }
-    # elif response.status_code == status.HTTP_400_BAD_REQUEST:
-    #     response.data = {
-    #         'error': 'Se produjo un error en la solicitud. Por favor, revisa los datos enviados.'
-    #     }
-    # return 1
 
 
 class CustomTokenRefreshView(TokenRefreshView):
@@ -228,7 +137,7 @@ class RegisterView(APIView):
             data={
                 "email": request.data["email"],
                 "password": request.data["password"],
-                "role": [1],
+                # "role": [3],
             }  # aqui debo poner por defecto 3
         )
         #
@@ -267,7 +176,7 @@ class ProfileView(APIView):
         user = request.user
         user_serealizer = UserCustomizeSerializer(user)
         if user and user_serealizer:
-            return Response({"user": user_serealizer.data}, status=status.HTTP_200_OK)
+            return Response(user_serealizer.data, status=status.HTTP_200_OK)
         else:
             return Response(
                 {"error": "Se genero un error al recuperar al usuario"},
@@ -298,15 +207,6 @@ class CheckUser(APIView):
             )
 
 
-# class UserInfor(APIView):
-#     permission_classes = [IsAuthenticated]
-#     def get(self, request, *args, **kwargs):
-#         user = request.user
-#         usuario = UserCustomizeSerializer(user)
-#         if user.is_authenticated:
-#             return Response({"user": usuario.data}, status=status.HTTP_200_OK)
-#         else:
-#             return Response({"error": "Usuario no encontrado"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(APIView):

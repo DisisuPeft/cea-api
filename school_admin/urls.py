@@ -16,8 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from myapps.authentication import views as auth_views
-from myapps.perfil import views as perfil_views
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -26,7 +24,8 @@ urlpatterns = [
     path('api/', include('myapps.sistema.urls')),
     path('api/', include('myapps.perfil.urls')),
     # path('api/', include('myapps.cursos.urls')),
-    # path('api/', include('myapps.configuracion.urls')),
+    path('api/', include('myapps.administrador.urls')),
+    path('api/', include('myapps.catalogos.urls'))
     # path('api/', include('myapps.centro_educativo.urls'))
     # path('perfil', perfil_views.getprofile, name='perfil'),
 ]

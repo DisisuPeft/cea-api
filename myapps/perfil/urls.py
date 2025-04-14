@@ -1,14 +1,12 @@
 from django.urls import path, re_path
-from .views import (
-    ProfileOpt,
-)
+from .views import ProfileView
 
 
 
 urlpatterns = [
 
-    path('users/myprofile/', ProfileOpt.as_view(), name="get"),
-    path('users/myprofile/edit/', ProfileOpt.as_view(), name="patch"),
+    path('users/myprofile/', ProfileView.as_view(), name="get"),
+    path('users/myprofile/edit/', ProfileView.as_view(), name="patch"),
     # path('admin/usuarios/editar/', UsuariosAdministrador.as_view(), name="patch"),
     # path('admin/usuarios/crear/', UsuariosAdministrador.as_view(), name="post"),
     # path('auth/refresh/', CustomTokenRefreshView.as_view()),

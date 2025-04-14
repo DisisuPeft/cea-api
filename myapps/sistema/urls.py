@@ -1,8 +1,5 @@
 from django.urls import path, re_path
-from .views import (
-    # CustomProviderAuthView,
-    Modulosview, TabsView
-)
+from .views.modulos import Modulosview, TabsView
 
 urlpatterns = [
     # re_path(

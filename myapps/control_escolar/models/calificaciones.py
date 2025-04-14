@@ -9,4 +9,4 @@ class Calificaciones(models.Model):
     periodo = models.ForeignKey(Periodos, on_delete=models.CASCADE, related_name="periodo_calificacion")
     calificacion = models.DecimalField(max_digits=5, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

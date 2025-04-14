@@ -5,4 +5,4 @@ class Ciclos(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

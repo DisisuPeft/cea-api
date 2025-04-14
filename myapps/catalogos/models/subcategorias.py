@@ -9,4 +9,4 @@ class SubCategoria(models.Model):
     created_at = models.DateField(null=True, blank=True)
     updated_at = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

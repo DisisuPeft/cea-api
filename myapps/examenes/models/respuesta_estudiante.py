@@ -7,4 +7,4 @@ class RespuestasEstudiantes(models.Model):
     pregunta = models.ForeignKey(Preguntas, on_delete=models.CASCADE, related_name="pregunta_respuesta")
     respuesta = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

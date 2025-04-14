@@ -1,7 +1,7 @@
 from myapps.authentication.models import UserCustomize, Roles, Permissions
 from rest_framework import serializers
-from myapps.perfil.models import Profile
-from myapps.perfil.serializers import ProfileSerializer
+# from myapps.perfil.models import Profile
+from myapps.perfil.serializer import ProfileSerializer
 from django.db import transaction
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
@@ -33,10 +33,10 @@ class PermissionCustomizeSerializer(serializers.ModelSerializer):
         
 class RoleCustomizeSerializer(serializers.ModelSerializer):
     #si  no aparece revisar como quedo el related 
-    permission = PermissionCustomizeSerializer(required=False, many=True)
+    # permission = PermissionCustomizeSerializer(required=False, many=True)
     class Meta:
         model = Roles
-        fields = ["id", "name", "permission"]
+        fields = ["id", "name"]
 
         def create(self, validated_data):
             role = Roles.objects.create(

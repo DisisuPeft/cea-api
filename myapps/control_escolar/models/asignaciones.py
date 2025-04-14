@@ -10,4 +10,4 @@ class Asignaciones(models.Model):
     grupo = models.ForeignKey(Grupos, on_delete=models.CASCADE, related_name="grupo_asignacion")
     ciclo = models.ForeignKey(Ciclos, related_name="ciclo_asignacion", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

@@ -14,8 +14,8 @@ from myapps.authentication.serializers import UserCustomizeSerializer
 from rest_framework import generics, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-from myapps.perfil.serializers import ProfileSerializer
-from myapps.perfil.models import Profile
+from myapps.perfil.serializer import ProfileSerializer
+# from myapps.perfil.models import Profile
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -29,33 +29,33 @@ from myapps.sistema.models import Modulos, TabsModulo
 from myapps.sistema.serializers import ModulosSerializer, TabsModuloSerializer
 # Create your views here.
 
-class Modulosview(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [CustomJWTAuthentication]
+# class Modulosview(APIView):
+#     permission_classes = [IsAuthenticated]
+#     authentication_classes = [CustomJWTAuthentication]
     
-    def get(self, request, *args, **kwargs):
-        # user = request.user.roleID.all()
-        # print(user)
-        modulos = Modulos.objects.filter(role__in=request.user.roleID.all()).distinct()
-        if not modulos:
-            return Response("Error al obtener el menu, verificar si existen", status=status.HTTP_404_NOT_FOUND)
-        serializer = ModulosSerializer(modulos, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     def get(self, request, *args, **kwargs):
+#         # user = request.user.roleID.all()
+#         # print(user)
+#         modulos = Modulos.objects.filter(role__in=request.user.roleID.all()).distinct()
+#         if not modulos:
+#             return Response("Error al obtener el menu, verifica con el administrador si tu rol ya fue asignado", status=status.HTTP_404_NOT_FOUND)
+#         serializer = ModulosSerializer(modulos, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
    
-class TabsView(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [CustomJWTAuthentication]  
+# class TabsView(APIView):
+#     permission_classes = [IsAuthenticated]
+#     authentication_classes = [CustomJWTAuthentication]  
     
-    def get(self, request):
-        rols = request.user.roleID.all()
-        permisos = Permissions.objects.filter(permission__in=rols).distinct()
-        tabs = TabsModulo.objects.filter(permiso__in=permisos)
-        print(permisos)
-        if not tabs:
-            return Response("Error al obtener el menu, verificar si existen", status=status.HTTP_404_NOT_FOUND)
-        serializer = TabsModuloSerializer(tabs, many=True)
-        # print(serializer.data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+#     def get(self, request):
+#         rols = request.user.roleID.all()
+#         permisos = Permissions.objects.filter(permission__in=rols).distinct()
+#         tabs = TabsModulo.objects.filter(permiso__in=permisos)
+#         # print(permisos)
+#         if not tabs:
+#             return Response("Error al obtener al obtener los submenus, verifica con el administrador", status=status.HTTP_404_NOT_FOUND)
+#         serializer = TabsModuloSerializer(tabs, many=True)
+#         # print(serializer.data)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 

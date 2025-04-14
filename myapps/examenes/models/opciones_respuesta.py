@@ -6,4 +6,4 @@ class OpcionesRespuestas(models.Model):
     text = models.TextField()
     is_correct = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

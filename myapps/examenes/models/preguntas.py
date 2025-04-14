@@ -7,4 +7,4 @@ class Preguntas(models.Model):
     enunciado = models.TextField()
     tipo = models.ForeignKey(TipoPreguntas, on_delete=models.CASCADE, related_name="tipo")
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

@@ -9,9 +9,9 @@ from myapps.authentication.decorators import role_required
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.models import UserCustomize
 from myapps.authentication.serializers import UserCustomizeSerializer
-from myapps.perfil.serializers import ProfileSerializer
+from myapps.perfil.serializer import ProfileSerializer
 
-class ProfileOpt(APIView):
+class ProfileView(APIView):
     permission_classes = [HasRoleWithRoles(['Administrador', 'Docente', 'Estudiante']), IsAuthenticated]
     def get(self, request):
         user_id = request.GET.get('id')

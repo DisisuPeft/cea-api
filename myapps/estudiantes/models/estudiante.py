@@ -16,3 +16,5 @@ class Estudiante(models.Model):
     tutor_nombre = models.CharField(max_length=100, blank=True)
     tutor_telefono = models.CharField(max_length=15, blank=True)
     activo = models.IntegerField()
+    fecha_creacion = models.DateField(auto_now=True)
+    fecha_actualizacion = models.DateField(null=True, blank=True)

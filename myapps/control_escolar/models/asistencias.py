@@ -8,4 +8,4 @@ class Asistencias(models.Model):
     fecha = models.DateField()
     state = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

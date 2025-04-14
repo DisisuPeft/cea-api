@@ -6,7 +6,7 @@ class Etapas(models.Model):
     descripcion = models.TextField()
     orden = models.PositiveIntegerField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)
     
     def __str__(self):
         return f"{self.orden} - {self.nombre}"

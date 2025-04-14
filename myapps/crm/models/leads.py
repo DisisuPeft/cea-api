@@ -19,4 +19,4 @@ class Lead(models.Model):
     vendedor_asignado = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='leads_asignados')
     notas = models.ManyToManyField(Notas, related_name="notas")
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)

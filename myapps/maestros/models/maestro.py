@@ -11,3 +11,5 @@ class Maestro(models.Model):
     telefono = models.CharField(max_length=15, blank=True)
     direccion = models.TextField(blank=True)
     activo = models.IntegerField()
+    fecha_creacion = models.DateField(auto_now=True)
+    fecha_actualizacion = models.DateField(null=True, blank=True)

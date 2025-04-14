@@ -8,4 +8,4 @@ class Inscripciones(models.Model):
     grupo = models.ForeignKey(Grupos, on_delete=models.CASCADE, related_name="grupo_inscripcion")
     ciclo = models.ForeignKey(Ciclos, on_delete=models.CASCADE, related_name="periodos_inscripcion")
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

@@ -14,4 +14,4 @@ class Matriculas(models.Model):
     grado = models.ForeignKey(Grados, on_delete=models.CASCADE, related_name="grado_matricula")
     status = models.BigIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

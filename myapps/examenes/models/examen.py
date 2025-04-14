@@ -10,4 +10,4 @@ class Examenes(models.Model):
     tipo_examen = models.ForeignKey(TiposExamen, on_delete=models.CASCADE, related_name="tipo_examen")
     fecha = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

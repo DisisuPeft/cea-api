@@ -7,4 +7,4 @@ class Especification(models.Model):
         SubCategoria, on_delete=models.SET_NULL, related_name="especification", null=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(null=True, blank=True)

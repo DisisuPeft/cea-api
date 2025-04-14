@@ -4,4 +4,4 @@ from django.db import models
 class Estatus(models.Model):
     nombre = models.CharField(max_length=100)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)
