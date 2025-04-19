@@ -33,10 +33,10 @@ class PermissionCustomizeSerializer(serializers.ModelSerializer):
         
 class RoleCustomizeSerializer(serializers.ModelSerializer):
     #si  no aparece revisar como quedo el related 
-    # permission = PermissionCustomizeSerializer(required=False, many=True)
+    permission = PermissionCustomizeSerializer(required=False, many=True)
     class Meta:
         model = Roles
-        fields = ["id", "name"]
+        fields = ["id", "name", "permission"]
 
         def create(self, validated_data):
             role = Roles.objects.create(
@@ -69,9 +69,10 @@ class UserCustomizeSerializer(serializers.ModelSerializer):
             'required': "La contraseña es obligatoria."
         }
     )
+    permission = PermissionCustomizeSerializer(required=False, many=True)
     class Meta:
         model = UserCustomize
-        fields = ["id", "email", "password", "profile", "role", "roleID"]
+        fields = ["id", "email", "password", "profile", "role", "roleID", "permission"]
 
     def create(self, validated_data):
         role_ids = validated_data.pop('role', [])

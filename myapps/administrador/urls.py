@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from .views.usuarios import UsuariosAdministrador, EditUsersAdministrador, RolesView
+from .views.usuarios import UsuariosAdministrador, EditUsersAdministrador, RolesView, PermissionView
 
 
 
@@ -14,6 +14,7 @@ urlpatterns = [
     # path('auth/register/', RegisterView.as_view()),
     # path('logout/', LogoutView.as_view()),
     path('cea/roles/', RolesView.as_view(), name="get"),
+    path('cea/permissions/', PermissionView.as_view(), name="get"),
 
     # path('auth/user/', ProfileView.as_view()),
     # path('check/user/', CheckUser.as_view()),

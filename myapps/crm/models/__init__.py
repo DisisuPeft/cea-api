@@ -5,3 +5,4 @@ from .leads import Lead
 from .observaciones import Observaciones
 from .unidadesnegocio import UnidadNegocio
 from .notas import Notas
+from .pipline import Pipline

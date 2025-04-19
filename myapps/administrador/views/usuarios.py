@@ -9,8 +9,8 @@ from rest_framework import generics, status
 # from myapps.perfil.models import Profile
 from myapps.perfil.serializer import ProfileSerializer
 from myapps.authentication.authenticate import CustomJWTAuthentication
-from myapps.authentication.models import Roles
-from myapps.authentication.serializers import RoleCustomizeSerializer
+from myapps.authentication.models import Roles, Permissions
+from myapps.authentication.serializers import RoleCustomizeSerializer, PermissionCustomizeSerializer
 
 class UsuariosAdministrador(APIView):
     permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
@@ -105,20 +105,22 @@ class EditUsersAdministrador(APIView):
         if 'email' in request.data and request.data['email']:
             user.email = request.data['email']
 
-        if 'rol' in request.data and request.data['rol']:
-            roles = request.data['rol']
+        if 'roleID' in request.data and request.data['roleID']:
+            roles = request.data['roleID']
             # print(roles)
+            user.roleID.clear()
             for rol in roles:
-                print(rol)
-                user.roleID.clear()
+                # print(rol)
                 user.roleID.add(rol['id'])
         
         user.save()
-        profile = request.data['profile']
-        for key, value in profile.items():
-            if key in profile and profile[key]:
+        profile_req = request.data['profile']
+        # print(profile_req)
+        for key, value in profile_req.items():
+            if key in profile_req and profile_req[key]:
                 if value:
-                    profile_data[key] = profile[key]
+                    profile_data[key] = profile_req[key]
+        print(profile_data)
         profile_serializer = ProfileSerializer(
             profile, 
             data=profile_data, 
@@ -128,6 +130,7 @@ class EditUsersAdministrador(APIView):
             if profile_data:
                 if profile_serializer.is_valid():
                     profile_serializer.save()
+                    return Response("Usuario editado con exito", status=status.HTTP_200_OK)
                 else:
                     return Response(profile_serializer.errors , status=status.HTTP_400_BAD_REQUEST)
             
@@ -146,6 +149,20 @@ class RolesView(APIView):
         if not roles: 
             return Response("Roles not found", status=status.HTTP_400_BAD_REQUEST)  
         serializer = RoleCustomizeSerializer(roles, many=True)
+        # sinroles = serializer.data
+        # print(sinroles.pop('permission'))
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class PermissionView(APIView):
+    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]
+    
+    def get(self, request):
+        permissions = Permissions.objects.all()
+        
+        if not permissions: 
+            return Response("Roles not found", status=status.HTTP_400_BAD_REQUEST)  
+        serializer = PermissionCustomizeSerializer(permissions, many=True)
         # sinroles = serializer.data
         # print(sinroles.pop('permission'))
         return Response(serializer.data, status=status.HTTP_200_OK)

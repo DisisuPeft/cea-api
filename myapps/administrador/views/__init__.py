@@ -1,1 +1,1 @@
-from .usuarios import UsuariosAdministrador, EditUsersAdministrador
+from .usuarios import UsuariosAdministrador, EditUsersAdministrador, PermissionView

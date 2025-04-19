@@ -11,3 +11,4 @@ from .subcategorias import SubCategoria
 from .tipo_nivel import TipoNivel
 from .niveles import Niveles
 from .periodos import Periodos
+from .instituciones_academicas import InstitucionAcademica
