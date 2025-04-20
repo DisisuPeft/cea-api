@@ -1,9 +1,9 @@
 from django.db import models
-from myapps.authentication.models import UserCustomize
-from myapps.sistema.models import Empresa
-# from .subcategorias import SubCategory
+from myapps.authentication.models import Roles, UserCustomize
+# Create your models here.
 
-class InstitucionAcademica(models.Model):
+
+class Empresa(models.Model):
     nombre = models.CharField(max_length=150)
     descripcion = models.TextField(blank=True, null=True)
     # slug = models.SlugField(unique=True)  # Para usar en URLs
@@ -12,10 +12,10 @@ class InstitucionAcademica(models.Model):
     telefono = models.CharField(max_length=20, blank=True, null=True)
     email_contacto = models.EmailField(blank=True, null=True)
     direccion = models.CharField(max_length=255, blank=True, null=True)
+    rfc = models.CharField(max_length=20, null=True, blank=True)
+    # Relación con usuario que administra esta institución (opcional)
+    # responsable = models.ForeignKey(UserCustomize, on_delete=models.CASCADE, null=True, blank=True)
 
-    # Relación con usuario que administra esta institución 
-    responsable = models.ForeignKey(UserCustomize, on_delete=models.CASCADE, null=True, blank=True)
-    empresa = models.ManyToManyField(Empresa, related_name="empresa")
     # Estados
     activa = models.IntegerField(null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)

@@ -112,6 +112,11 @@ class EditUsersAdministrador(APIView):
             for rol in roles:
                 # print(rol)
                 user.roleID.add(rol['id'])
+        if 'permission' in request.data and request.data['permission']:
+            permission = request.data['permission']
+            user.permission.clear()
+            for p in permission:
+                user.permission.add(p['id'])
         
         user.save()
         profile_req = request.data['profile']
@@ -161,7 +166,7 @@ class PermissionView(APIView):
         permissions = Permissions.objects.all()
         
         if not permissions: 
-            return Response("Roles not found", status=status.HTTP_400_BAD_REQUEST)  
+            return Response("Permissions not found", status=status.HTTP_400_BAD_REQUEST)  
         serializer = PermissionCustomizeSerializer(permissions, many=True)
         # sinroles = serializer.data
         # print(sinroles.pop('permission'))

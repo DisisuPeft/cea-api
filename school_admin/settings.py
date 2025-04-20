@@ -214,5 +214,6 @@ CORS_ALLOWED_ORIGINS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "authentication.UserCustomize"
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'  # o os.path.join(BASE_DIR, 'media')
 # https://psicotest.app/ligapsicometria/26852_72050
