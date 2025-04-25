@@ -15,7 +15,7 @@ class InstitucionAcademica(models.Model):
 
     # Relación con usuario que administra esta institución 
     responsable = models.ForeignKey(UserCustomize, on_delete=models.CASCADE, null=True, blank=True)
-    empresa = models.ManyToManyField(Empresa, related_name="empresa")
+    empresa = models.ManyToManyField(Empresa, related_name="institucion_academica")
     # Estados
     activa = models.IntegerField(null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)

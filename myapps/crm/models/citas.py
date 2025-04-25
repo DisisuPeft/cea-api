@@ -14,12 +14,12 @@ class EstadoCita(models.Model):
     
 class Cita(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.CASCADE, related_name="citas")
-    responsable = models.ForeignKey(UserCustomize, on_delete=models.SET_NULL, null=True, related_name="citas_agendadas")
-    tipo = models.ForeignKey(TipoCita, on_delete=models.CASCADE, related_name="tipo_cita")
+    responsable = models.ForeignKey(UserCustomize, on_delete=models.SET_NULL, null=True, related_name="citas_agendadas_por")
+    tipo = models.ForeignKey(TipoCita, on_delete=models.CASCADE, related_name="cita")
     fecha = models.DateField()
     hora = models.TimeField()
     notas = models.TextField(blank=True, null=True)
-    estado = models.ForeignKey(EstadoCita, on_delete=models.CASCADE, related_name="estado_cita")
+    estado = models.ForeignKey(EstadoCita, on_delete=models.CASCADE, related_name="cita_estado")
     recordatorio_enviado = models.BooleanField(default=False)
     creada_en = models.DateTimeField(auto_now_add=True)
     actualizada_en = models.DateTimeField(null=True, blank=True)

@@ -26,7 +26,7 @@ from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from myapps.sistema.models import Modulos, TabsModulo
-from myapps.sistema.serializers import ModulosSerializer, TabsModuloSerializer
+from myapps.sistema.serializer import ModulosSerializer, TabsModuloSerializer
 # Create your views here.
 
 class Modulosview(APIView):
@@ -51,12 +51,15 @@ class TabsView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [CustomJWTAuthentication]  
     
-    def get(self, request):
+    def get(self, request, id):
+        # print(id)
         user = request.user
         permissions = user.permission.all()
-        print(permissions)
+        # print(permissions)
         # permisos = Permissions.objects.filter(permiso__in=user.permission.all()).distinct()
-        tabs = TabsModulo.objects.filter(permiso__in=permissions)
+        tasb_user = TabsModulo.objects.filter(user=user.id).filter(modulo=id).distinct()
+        tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=id).distinct()
+        tabs = (tasb_user | tabs_permiso).distinct()
         # print(permisos)
         if not tabs:
             return Response("Error al obtener al obtener los submenus, verifica con el administrador", status=status.HTTP_404_NOT_FOUND)

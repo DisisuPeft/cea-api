@@ -1,0 +1,2 @@
+from .modulos import TabsModuloSerializer, ModulosSerializer
+from .empresa_serializer import EmpresaSerializer

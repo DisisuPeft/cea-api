@@ -211,7 +211,7 @@ class CheckUser(APIView):
 
 class LogoutView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-
+    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         response = Response(status=status.HTTP_204_NO_CONTENT)
         response.delete_cookie("access")

@@ -5,7 +5,7 @@ from ...catalogos.models.ciclos import Ciclos
 from myapps.maestros.models.maestro import Maestro
 
 class Asignaciones(models.Model):
-    profesor = models.ForeignKey(Maestro, on_delete=models.CASCADE, related_name="profesor_asignacion")
+    profesor = models.ForeignKey(Maestro, on_delete=models.CASCADE, related_name="maestro_asignacion")
     materia = models.ForeignKey(Materias, on_delete=models.CASCADE, related_name="materia_asignacion")
     grupo = models.ForeignKey(Grupos, on_delete=models.CASCADE, related_name="grupo_asignacion")
     ciclo = models.ForeignKey(Ciclos, related_name="ciclo_asignacion", on_delete=models.CASCADE)

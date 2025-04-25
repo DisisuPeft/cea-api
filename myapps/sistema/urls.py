@@ -8,7 +8,7 @@ urlpatterns = [
     #     name='provider-auth'
     # ),
     path("menu/all/", Modulosview.as_view(), name="get"),
-    path("tabs/all/", TabsView.as_view(), name="get")
+    path("tabs/all/<int:id>", TabsView.as_view(), name="get")
     # path("auth/refresh/", CustomTokenRefreshView.as_view()),
     # path("auth/verify/", CustomTokenVerifyView.as_view()),
     # path("auth/register/", RegisterView.as_view()),
