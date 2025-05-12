@@ -25,8 +25,11 @@ from django.conf import settings
 from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
-from ..models import Lead
-from ..serializer import LeadsSerializer
+from ..models import Lead, CampaniaPrograma, Pipline
+from ..serializer import LeadsSerializer, PipelineSerializer
+from django.utils import timezone
+from django.db.models import Q
+
 # Create your views here.
 # EN formularios siempre devolver el puro serializer 
 class LeadsView(APIView):
@@ -34,8 +37,10 @@ class LeadsView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
     def get(self, request, *args, **kwargs):
+        # campania = self.define_campania()
+        # print(campania.id)
         queryset = Lead.objects.all().select_related(
-            'fuente', 'interesado_en', 'etapa', 'estatus', 'empresa', 'institucion'
+            'fuente', 'etapa', 'estatus', 'empresa', 'institucion'
         ).prefetch_related('notas', 'observaciones')
         
         if not queryset:
@@ -44,4 +49,40 @@ class LeadsView(APIView):
         serializer = LeadsSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class LeadView(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
+    authentication_classes = [CustomJWTAuthentication]
+    # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
+    def get(self, request, id):
+        # campania = self.define_campania()
+        # lead
+        queryset = Lead.objects.filter(id=id).select_related(
+            'fuente', 'etapa', 'estatus', 'empresa', 'institucion'
+        ).prefetch_related('notas', 'observaciones')
+        
+        if not queryset:
+            return Response("No query found", status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = LeadsSerializer(queryset[0])
+        
+        #Pipelines
+        # print(queryset[0].etapa.pipline.id)
+        p =  Pipline.objects.filter(id=queryset[0].etapa.pipline.id).prefetch_related('etapas')
+        
+        if not p:
+            return Response("No query found", status=status.HTTP_404_NOT_FOUND)
 
+        pipeline = PipelineSerializer(p, many=True)
+        
+        return Response({"lead": serializer.data, "pipeline": pipeline.data}, status=status.HTTP_200_OK)
+
+    def define_campania(self):
+        now = timezone.now()
+        # less than o equalt to lte    greater than or equal to gte
+        # campania = Campania.objects.filter(
+        #     Q(activa=1) & (Q(fecha_inicio__lte=now) & Q(fecha_fin__gte=now))            
+        # ).first()
+        # return campania
+        campania_programa = CampaniaPrograma.objects.filter(
+            
+        )

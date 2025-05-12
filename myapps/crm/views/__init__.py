@@ -1,1 +1,2 @@
-from .leads import LeadsView
+from .leads import LeadsView, LeadView
+# from .pipeline import PipelineAllView

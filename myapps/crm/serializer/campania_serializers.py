@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Lead
+from ..models import Campania
 from myapps.catalogos.serializer import InstitucionAcademicaSerializer
 from myapps.catalogos.models import InstitucionAcademica
 from .fuentes_serializer import FuenteSerializer
@@ -8,20 +8,19 @@ from .etapas_serializers import EtapaSerializer
 from myapps.authentication.serializers import UserCustomizeSerializer
 from myapps.catalogos.serializer import InstitucionAcademicaSerializer
 from myapps.sistema.serializer import EmpresaSerializer
+from ..models.campanias import CampaniaPrograma
 from myapps.control_escolar.serializer import ProgramaEducativoSerializer
-from .campania_serializers import CampaniaProgramaSerializer
 # from myapps.sistema.serializer import
 
-class LeadsSerializer(serializers.ModelSerializer):
-    fuente = FuenteSerializer(read_only=True)
-    etapa = EtapaSerializer(read_only=True)
-    vendedor_asignado = UserCustomizeSerializer(read_only=True)
-    interesado_en = ProgramaEducativoSerializer(read_only=True)
-    institucion = InstitucionAcademicaSerializer(read_only=True)
-    empresa = EmpresaSerializer(read_only=True)
-    estatus = EstatusSerializer(read_only=True)
-    campania = CampaniaProgramaSerializer(read_only=True)
-    
+class CampaniaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Lead
+        model = Campania
         fields = '__all__'
+        
+        
+class CampaniaProgramaSerializer(serializers.ModelSerializer):
+    campania = CampaniaSerializer()
+    programa = ProgramaEducativoSerializer()
+    class Meta:
+        model = CampaniaPrograma
+        fields = ["id", "campania", "programa", "costo_asignado"]
