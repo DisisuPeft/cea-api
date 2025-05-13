@@ -43,7 +43,7 @@ class Modulosview(APIView):
         
         modulos = (modulos_user | modulos_rol).distinct()
         if not modulos:
-            return Response("Error al obtener el menu, verifica con el administrador si tu rol ya fue asignado", status=status.HTTP_404_NOT_FOUND)
+            return Response("menu not found", status=status.HTTP_404_NOT_FOUND)
         serializer = ModulosSerializer(modulos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
    
@@ -57,10 +57,17 @@ class TabsView(APIView):
         permissions = user.permission.all()
         # print(permissions)
         # permisos = Permissions.objects.filter(permiso__in=user.permission.all()).distinct()
-        tasb_user = TabsModulo.objects.filter(user=user.id).filter(modulo=id).distinct()
+        tabs_user = TabsModulo.objects.filter(user=user.id).filter(modulo=id).distinct()
         tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=id).distinct()
-        tabs = (tasb_user | tabs_permiso).distinct()
-        # print(permisos)
+        
+        # print(tabs_user, tabs_permiso)
+        if tabs_user.exists() and tabs_permiso.exists():
+            tabs = (tabs_user | tabs_permiso).distinct()
+        elif tabs_user.exists():
+            tabs = tabs_user
+        else:
+            tabs = tabs_permiso
+
         if not tabs:
             return Response("Error al obtener al obtener los submenus, verifica con el administrador", status=status.HTTP_404_NOT_FOUND)
         serializer = TabsModuloSerializer(tabs, many=True)

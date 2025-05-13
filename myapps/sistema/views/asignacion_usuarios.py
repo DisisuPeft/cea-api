@@ -26,7 +26,7 @@ from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from myapps.sistema.models import Modulos, TabsModulo
-from myapps.sistema.serializers import ModulosSerializer, TabsModuloSerializer
+from myapps.sistema.serializer import ModulosSerializer, TabsModuloSerializer
 # Create your views here.
 
 # class Modulosview(APIView):
