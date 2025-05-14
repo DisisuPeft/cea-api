@@ -25,8 +25,8 @@ from django.conf import settings
 from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
-from ..models import Lead, CampaniaPrograma, Pipline
-from ..serializer import LeadsSerializer, PipelineSerializer
+from ..models import Lead, CampaniaPrograma, Pipline, Estatus
+from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer
 from django.utils import timezone
 from django.db.models import Q
 
@@ -70,11 +70,17 @@ class LeadView(APIView):
         p =  Pipline.objects.filter(id=queryset[0].etapa.pipline.id).prefetch_related('etapas')
         
         if not p:
-            return Response("No query found", status=status.HTTP_404_NOT_FOUND)
+            return Response("Pipeline query not found", status=status.HTTP_404_NOT_FOUND)
 
         pipeline = PipelineSerializer(p, many=True)
         
-        return Response({"lead": serializer.data, "pipeline": pipeline.data}, status=status.HTTP_200_OK)
+        estatus = Estatus.objects.all()
+        
+        if not estatus:
+            return Response("Status query not found", status=status.HTTP_404_NOT_FOUND)
+        estatus_serializer = EstatusSerializer(estatus, many=True)
+        
+        return Response({"lead": serializer.data, "pipeline": pipeline.data, "estatus": estatus_serializer.data}, status=status.HTTP_200_OK)
 
     def define_campania(self):
         now = timezone.now()

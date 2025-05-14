@@ -4,3 +4,4 @@ from .etapas_serializers import EtapaSerializer
 from .fuentes_serializer import FuenteSerializer
 from .campania_serializers import CampaniaSerializer, CampaniaProgramaSerializer
 from .pipeline_serializers import PipelineSerializer
+from .notas_serializers import NotasSerializer

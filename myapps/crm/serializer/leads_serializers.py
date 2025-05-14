@@ -10,6 +10,7 @@ from myapps.catalogos.serializer import InstitucionAcademicaSerializer
 from myapps.sistema.serializer import EmpresaSerializer
 from myapps.control_escolar.serializer import ProgramaEducativoSerializer
 from .campania_serializers import CampaniaProgramaSerializer
+from .notas_serializers import NotasSerializer
 # from myapps.sistema.serializer import
 
 class LeadsSerializer(serializers.ModelSerializer):
@@ -21,7 +22,7 @@ class LeadsSerializer(serializers.ModelSerializer):
     empresa = EmpresaSerializer(read_only=True)
     estatus = EstatusSerializer(read_only=True)
     campania = CampaniaProgramaSerializer(read_only=True)
-    
+    notas = NotasSerializer(read_only=True, many=True)
     class Meta:
         model = Lead
         fields = '__all__'

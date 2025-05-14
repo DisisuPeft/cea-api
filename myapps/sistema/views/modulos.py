@@ -41,7 +41,14 @@ class Modulosview(APIView):
         modulos_user = Modulos.objects.filter(usuario=user.id).distinct()
         modulos_rol = Modulos.objects.filter(role__in=roles).distinct()
         
-        modulos = (modulos_user | modulos_rol).distinct()
+        # modulos = (modulos_user | modulos_rol).distinct()
+        if modulos_user.exists() and modulos_rol.exists():
+            modulos = (modulos_user | modulos_rol).distinct()
+        elif modulos_user.exists():
+             modulos = modulos_user
+        else:
+            modulos = modulos_rol
+            
         if not modulos:
             return Response("menu not found", status=status.HTTP_404_NOT_FOUND)
         serializer = ModulosSerializer(modulos, many=True)

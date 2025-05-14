@@ -5,4 +5,4 @@ from ..models import Estatus
 class EstatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Estatus
-        fields = '__all__'
+        fields = ["id", "nombre"]
