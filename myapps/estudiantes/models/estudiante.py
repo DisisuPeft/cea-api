@@ -1,8 +1,7 @@
 from django.db import models
 from myapps.authentication.models import UserCustomize
 from myapps.perfil.models import User as Profile
-from myapps.catalogos.models.grupos import Grupos
-from myapps.catalogos.models.niveleducativo import NivelEducativo
+from myapps.catalogos.models import (Grupos, NivelEducativo, EstadosRepublica, Municipios)
 
 class Estudiante(models.Model):
     user = models.OneToOneField(UserCustomize, on_delete=models.CASCADE, null=True, blank=True, related_name="estudiante")
@@ -10,11 +9,9 @@ class Estudiante(models.Model):
     curp = models.CharField(max_length=18, unique=True, null=True, blank=True)
     matricula = models.CharField(max_length=20, unique=True)
     grupo = models.ForeignKey(Grupos, on_delete=models.CASCADE, null=True, blank=True)
-    nivel_educativo = models.ForeignKey(NivelEducativo, on_delete=models.CASCADE, null=True, blank=True)
-    fecha_nacimiento = models.DateField()
-    lugar_nacimiento = models.CharField(max_length=100, blank=True, null=True)
+    lugar_nacimiento = models.ForeignKey(EstadosRepublica, related_name="estudiante", on_delete=models.SET_NULL, blank=True, null=True)
+    municipio = models.ForeignKey(Municipios, related_name="estudiante", on_delete=models.SET_NULL, blank=True, null=True)
     direccion = models.TextField(blank=True, null=True)
-    telefono = models.CharField(max_length=15, blank=True, null=True)
     tutor_nombre = models.CharField(max_length=100, blank=True, null=True)
     tutor_telefono = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(null=True, blank=True, unique=True)
