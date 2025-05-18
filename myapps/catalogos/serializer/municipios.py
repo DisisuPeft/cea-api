@@ -4,4 +4,4 @@ from ..models import Municipios
 class MunicipiosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Municipios
-        fields = ["id", "name"]
+        fields = ["id", "nombre"]

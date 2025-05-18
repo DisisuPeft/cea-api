@@ -30,9 +30,11 @@ class MunicipioView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
     
-    def get(self, request, *args, **kwargs):
-        # generos = Genero.objects.all()
-        # if not generos:
-            return Response("No existen generos registrados", status=status.HTTP_404_NOT_FOUND)
-        # serializer = GeneroSerializer(generos, many=True)
-        # return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, id):
+        # entidad_id = request.GET.get('id')
+        # print(id)
+        municipios = Municipios.objects.filter(estado=id)
+        if not municipios:
+            return Response("Not found municipios", status=status.HTTP_404_NOT_FOUND)
+        serializer = MunicipiosSerializer(municipios, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -125,7 +125,7 @@ class EditUsersAdministrador(APIView):
             if key in profile_req and profile_req[key]:
                 if value:
                     profile_data[key] = profile_req[key]
-        print(profile_data)
+        # print(profile_data)
         profile_serializer = ProfileSerializer(
             profile, 
             data=profile_data, 
