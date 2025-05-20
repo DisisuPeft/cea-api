@@ -28,6 +28,6 @@ urlpatterns = [
     path('api/', include('myapps.catalogos.urls')),
     path('api/', include('myapps.crm.urls')),
     path('api/', include('myapps.estudiantes.urls')),
-    # path('api/', include('myapps.centro_educativo.urls'))
+    path('api/', include('myapps.maestros.urls'))
     # path('perfil', perfil_views.getprofile, name='perfil'),
 ]

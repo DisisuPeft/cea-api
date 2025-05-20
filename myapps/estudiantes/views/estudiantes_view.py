@@ -62,7 +62,7 @@ class StudentsView(APIView):
         if profile_serializer.is_valid():
             serializer_p = profile_serializer.save()
             student['perfil'] = serializer_p.id
-            print(student)
+            # print(student)
             estudiante_serializer = EstudianteSerializer(data=student)
             if estudiante_serializer.is_valid():
                 estudiante_serializer.save()
