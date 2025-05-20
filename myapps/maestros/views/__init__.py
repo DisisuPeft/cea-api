@@ -1,1 +1,1 @@
-from .maestro_view import TeacherView
+from .maestro_view import TeacherView, TeacherReadView, TeacherEditView

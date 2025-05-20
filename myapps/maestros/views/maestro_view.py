@@ -38,7 +38,7 @@ class TeacherView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
     def get(self, request):
-        maestros = Maestro.objects.all().select_related("especialidad", "perfil")
+        maestros = Maestro.objects.all().select_related("especialidad", "perfil", "estatus")
         if not maestros:
             return Response("Teachers not found", status=status.HTTP_404_NOT_FOUND)
         serializer = MaestroSerializerView(maestros, many=True)
@@ -70,18 +70,43 @@ class TeacherView(APIView):
             return Response(maestro_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class StudentView(APIView):
-#     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
-#     authentication_classes = [CustomJWTAuthentication]
-#     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
-#     def get(self, request, id):
-#         estudiante = Estudiante.objects.filter(id=id)
-#         if not estudiante:
-#             return Response("Estudiantes not found", status=status.HTTP_404_NOT_FOUND)
-#         serializer = EstudianteSerializerView(estudiante[0])
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+class TeacherReadView(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    authentication_classes = [CustomJWTAuthentication]
+    # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
+    def get(self, request, id):
+        maestro = Maestro.objects.filter(id=id).first()
+        if not maestro:
+            return Response("Maestro not found", status=status.HTTP_404_NOT_FOUND)
+        serializer = MaestroSerializerView(maestro)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
+class TeacherEditView(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    authentication_classes = [CustomJWTAuthentication]
     
+    def get(self, request, id):
+        maestro = Maestro.objects.filter(id=id).first()
+        if not maestro:
+            return Response("Maestro not found", status=status.HTTP_404_NOT_FOUND)
+        serializer = MaestroSerializerForm(maestro)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, id):
+        if id:
+            maestro = Maestro.objects.filter(id=id).first()
+            if not maestro:
+                return Response("No teacher found", status=status.HTTP_404_NOT_FOUND)
+            # request.data['activo'] = 1
+            maestro_serializer = MaestroSerializerForm(maestro, data=request.data, partial=True)
+            if maestro_serializer.is_valid():
+                maestro_serializer.save()
+                return Response("Maestro actualizado con exito", status=status.HTTP_200_OK)
+            else:
+                return Response(maestro_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response("Not id param found", status=status.HTTP_400_BAD_REQUEST)
+
 # class StudentUpdateView(APIView):
 #     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
 #     authentication_classes = [CustomJWTAuthentication]

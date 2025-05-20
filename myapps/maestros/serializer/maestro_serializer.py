@@ -31,13 +31,27 @@ class MaestroSerializerForm(serializers.ModelSerializer):
         if not maestro:
             raise ValidationError("El maestro no pudo ser creado")
         return maestro
-
+    
+    def update(self, instance, validated_data):
+        perfil = validated_data.pop('perfil')
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        instance.save()
+        
+        if perfil:
+            for attr, value in perfil.items():
+                setattr(instance.perfil, attr, value)
+            instance.perfil.save()
+        return instance
 
 class MaestroSerializerView(serializers.ModelSerializer):
     especialidad = serializers.SerializerMethodField()
     perfil = ProfileSerializer()
     estado = serializers.SerializerMethodField()
     municipio = serializers.SerializerMethodField()
+    estatus = serializers.SerializerMethodField()
     
     class Meta:
         model = Maestro
@@ -48,6 +62,8 @@ class MaestroSerializerView(serializers.ModelSerializer):
         return obj.municipio.nombre if obj.municipio else None
     def get_especialidad(self, obj):
         return obj.especialidad.name if obj.especialidad else None
+    def get_estatus(self, obj):
+        return obj.estatus.name if obj.estatus else None
        
 class EspecialidadViewSerializer(serializers.ModelSerializer):
     
