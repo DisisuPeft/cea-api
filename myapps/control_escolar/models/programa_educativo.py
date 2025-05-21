@@ -52,6 +52,7 @@ class PublicoObjetivo(models.Model):
 class PerfilIngreso(models.Model):
     programa = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="perfil_ingreso")
     descripcion = models.TextField()
+    orden = models.PositiveIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
 
@@ -76,42 +77,49 @@ class EnfoquePedagogico(models.Model):
 class RequisitoIngreso(models.Model):
     programa = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="requisito_ingreso")
     texto = models.CharField(max_length=300)
+    orden = models.PositiveIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
     
 class RequisitoPermanencia(models.Model):
     programa = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="requisito_permanencia")
     texto = models.CharField(max_length=300)
+    orden = models.PositiveIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
     
 class RequisitoEgreso(models.Model):
     programa = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="requisito_egreso")
     texto = models.CharField(max_length=300)
+    orden = models.PositiveIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
 
 class PerfilEgreso(models.Model):
     programa = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="perfil_egreso")
     descripcion = models.TextField()
+    orden = models.PositiveIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
 
 class ResultadoAplicacion(models.Model):
     programa = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="resultado_aplicacion")
     texto = models.CharField(max_length=300)
+    orden = models.PositiveIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
 
 class ResultadoActualizacion(models.Model):
     programa = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="resultado_actualizacion")
     texto = models.CharField(max_length=300)
+    orden = models.PositiveIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
 
 class ResultadoCrecimiento(models.Model):
     programa = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="resultado_crecimiento")
     texto = models.CharField(max_length=300)
+    orden = models.PositiveIntegerField(default=0)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
 
