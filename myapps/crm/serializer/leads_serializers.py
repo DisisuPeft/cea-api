@@ -11,6 +11,7 @@ from myapps.sistema.serializer import EmpresaSerializer
 from myapps.control_escolar.serializer import ProgramaEducativoSerializer
 from .campania_serializers import CampaniaProgramaSerializer
 from .notas_serializers import NotasSerializer
+from rest_framework.exceptions import ValidationError
 # from myapps.sistema.serializer import
 
 class LeadsSerializer(serializers.ModelSerializer):
@@ -26,3 +27,15 @@ class LeadsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lead
         fields = '__all__'
+        
+class LeadCreateLandingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lead
+        fields = '__all__'
+        
+    def create(self, validated_data):
+        lead = Lead.objects.create(**validated_data)
+        if not lead:
+            raise ValidationError("lead no creado")
+        lead.save()
+        return lead

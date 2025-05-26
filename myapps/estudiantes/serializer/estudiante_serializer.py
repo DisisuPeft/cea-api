@@ -13,7 +13,7 @@ class EstudianteSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         profile_id = validated_data.pop('perfil')
-        print(validated_data)
+        # print(validated_data)
         estudiante = Estudiante.objects.create(**validated_data)
         if not estudiante:
             raise ValidationError("Estudiante no creado")
