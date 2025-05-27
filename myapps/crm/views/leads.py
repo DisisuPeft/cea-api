@@ -26,12 +26,30 @@ from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from ..models import Lead, CampaniaPrograma, Pipline, Estatus, Fuentes, Etapas
-from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, LeadCreateLandingSerializer
+from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, LeadCreateLandingSerializer, LeadRecentSerializer
 from django.utils import timezone
 from django.db.models import Q
 
 # Create your views here.
 # EN formularios siempre devolver el puro serializer 
+
+class RecentLeadsView(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
+    authentication_classes = [CustomJWTAuthentication]
+    # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
+    def get(self, request, *args, **kwargs):
+        # campania = self.define_campania()
+        # print(campania.id)
+        queryset = Lead.objects.all().select_related(
+            'fuente', 'etapa', 'estatus', 'interesado_en', 'vendedor_asignado'
+        ).order_by("-fecha_creacion")[:5]
+        
+        if not queryset:
+            return Response("No query found", status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = LeadRecentSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 class LeadsView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
     authentication_classes = [CustomJWTAuthentication]

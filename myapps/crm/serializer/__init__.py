@@ -1,4 +1,4 @@
-from .leads_serializers import LeadsSerializer, LeadCreateLandingSerializer
+from .leads_serializers import LeadsSerializer, LeadCreateLandingSerializer, LeadRecentSerializer
 from .estatus_serializer import EstatusSerializer 
 from .etapas_serializers import EtapaSerializer
 from .fuentes_serializer import FuenteSerializer

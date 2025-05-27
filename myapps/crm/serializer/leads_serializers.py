@@ -27,6 +27,28 @@ class LeadsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lead
         fields = '__all__'
+
+class LeadRecentSerializer(serializers.ModelSerializer):
+    interesado_en = serializers.SerializerMethodField()
+    etapa = serializers.SerializerMethodField()
+    estatus = serializers.SerializerMethodField()
+    vendedor_asignado = serializers.SerializerMethodField()
+    class Meta:
+        model = Lead
+        fields = ["id", "nombre", "interesado_en", "etapa", "estatus", "vendedor_asignado"]
+        
+    def get_interesado_en(self, obj):
+        return obj.interesado_en.nombre if obj.interesado_en else None    
+        
+    def get_etapa(self, obj):
+        return obj.etapa.nombre if obj.etapa else None
+    def get_estatus(self, obj):
+        return obj.estatus.nombre if obj.estatus else None
+    
+    def get_vendedor_asignado(self, obj):
+        # print(obj.vendedor_asignado)
+        return f"{obj.vendedor_asignado.profile.nombre} {obj.vendedor_asignado.profile.apellidoP} {obj.vendedor_asignado.profile.apellidoM or ''}" if obj.vendedor_asignado else None
+    
         
 class LeadCreateLandingSerializer(serializers.ModelSerializer):
     class Meta:
