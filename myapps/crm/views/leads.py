@@ -29,6 +29,8 @@ from ..models import Lead, CampaniaPrograma, Pipline, Estatus, Fuentes, Etapas
 from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, LeadCreateLandingSerializer, LeadRecentSerializer
 from django.utils import timezone
 from django.db.models import Q
+from ..pagination import LeadPagination
+from django.db.models import Count
 
 # Create your views here.
 # EN formularios siempre devolver el puro serializer 
@@ -49,6 +51,28 @@ class RecentLeadsView(APIView):
         
         serializer = LeadRecentSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class EstadisticsLeadsView(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
+    authentication_classes = [CustomJWTAuthentication]
+    
+    def get(self, request):
+        leads_count = Lead.objects.count()
+        total_lead_etapa = Lead.objects.values('etapa__nombre').annotate(total=Count('id'))
+        total_lead_programa = Lead.objects.values('interesado_en__nombre').annotate(total=Count('id'))
+        if not leads_count:
+            return Response("There are not countable leads", status=status.HTTP_400_BAD_REQUEST)
+        if not total_lead_etapa:
+            return Response("There are not countable leads for stage", status=status.HTTP_400_BAD_REQUEST)
+        if not total_lead_programa:
+            return Response("There are not countable leads for program", status=status.HTTP_400_BAD_REQUEST) 
+        
+        data = {
+            'total_leads': leads_count,
+            'total_lead_etapa': total_lead_etapa,
+            'total_lead_programa': total_lead_programa
+        }
+        return Response(data, status=status.HTTP_200_OK)
     
 class LeadsView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
@@ -59,13 +83,15 @@ class LeadsView(APIView):
         # print(campania.id)
         queryset = Lead.objects.all().select_related(
             'fuente', 'etapa', 'estatus', 'empresa', 'institucion'
-        ).prefetch_related('notas', 'observaciones')
-        
+        ).prefetch_related('notas', 'observaciones').order_by('-fecha_creacion')
+        paginator = LeadPagination()
+        result = paginator.paginate_queryset(queryset=queryset, request=request)
+        # print(result)
         if not queryset:
             return Response("No query found", status=status.HTTP_404_NOT_FOUND)
         
-        serializer = LeadsSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = LeadsSerializer(result, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 class LeadView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
