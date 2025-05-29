@@ -19,8 +19,14 @@ class CampaniaSerializer(serializers.ModelSerializer):
         
         
 class CampaniaProgramaSerializer(serializers.ModelSerializer):
-    campania = CampaniaSerializer()
-    programa = ProgramaEducativoSerializer()
+    campania = serializers.SerializerMethodField()
+    programa = serializers.SerializerMethodField()
     class Meta:
         model = CampaniaPrograma
         fields = ["id", "campania", "programa", "costo_asignado"]
+        
+    def get_campania(self, obj):
+        return {"id": obj.campania.id, "nombre": obj.campania.nombre, "fecha_inicio": obj.campania.fecha_inicio, "fecha_fin": obj.campania.fecha_fin} if obj.campania else None
+
+    def get_programa(self, obj):
+        return {"id": obj.programa.id, "nombre": obj.programa.nombre} if obj.programa else None

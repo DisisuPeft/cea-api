@@ -79,8 +79,7 @@ class LeadsView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
     def get(self, request, *args, **kwargs):
-        # campania = self.define_campania()
-        # print(campania.id)
+
         queryset = Lead.objects.all().select_related(
             'fuente', 'etapa', 'estatus', 'empresa', 'institucion'
         ).prefetch_related('notas', 'observaciones').order_by('-fecha_creacion')

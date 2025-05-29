@@ -15,19 +15,38 @@ from rest_framework.exceptions import ValidationError
 # from myapps.sistema.serializer import
 
 class LeadsSerializer(serializers.ModelSerializer):
-    fuente = FuenteSerializer(read_only=True)
-    etapa = EtapaSerializer(read_only=True)
-    vendedor_asignado = UserCustomizeSerializer(read_only=True)
-    interesado_en = ProgramaEducativoSerializer(read_only=True)
-    institucion = InstitucionAcademicaSerializer(read_only=True)
-    empresa = EmpresaSerializer(read_only=True)
-    estatus = EstatusSerializer(read_only=True)
+    fuente = serializers.SerializerMethodField()
+    etapa = serializers.SerializerMethodField()
+    vendedor_asignado = serializers.SerializerMethodField()
+    interesado_en = serializers.SerializerMethodField()
+    institucion = serializers.SerializerMethodField()
+    # empresa = EmpresaSerializer(read_only=True)
+    estatus = serializers.SerializerMethodField()
     campania = CampaniaProgramaSerializer(read_only=True)
     notas = NotasSerializer(read_only=True, many=True)
+    
     class Meta:
         model = Lead
         fields = '__all__'
-
+        
+    def get_fuente(self, obj):
+        return obj.fuente.nombre if obj.fuente else None
+    
+    def get_etapa(self, obj):
+        return obj.etapa.nombre if obj.etapa else None
+    
+    def get_estatus(self, obj):
+        return obj.estatus.nombre if obj.estatus else None
+    
+    def get_vendedor_asignado(self, obj):
+        return f"{obj.vendedor_asignado.profile.nombre} {obj.vendedor_asignado.profile.apellidoP} {obj.vendedor_asignado.profile.apellidoM or ''}" if obj.vendedor_asignado else None
+    
+    def get_interesado_en(self, obj):
+        return obj.interesado_en.nombre if obj.interesado_en else None   
+    
+    def get_institucion(self, obj):
+        return obj.institucion.nombre if obj.institucion else None 
+    
 class LeadRecentSerializer(serializers.ModelSerializer):
     interesado_en = serializers.SerializerMethodField()
     etapa = serializers.SerializerMethodField()
