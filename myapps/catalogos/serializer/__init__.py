@@ -1,6 +1,6 @@
 from .genero import GeneroSerializer
 from .nivel_educativo import NivelEducativoSerializer
 from .tipo_nivel import TipoNivelSerializer
-from .institucion_serializers import InstitucionAcademicaSerializer
+from .institucion_serializers import InstitucionAcademicaSerializer, InstitucionSerializarGeneric
 from .estados_republica import EstadosRepublicaSerializer
 from .municipios import MunicipiosSerializer

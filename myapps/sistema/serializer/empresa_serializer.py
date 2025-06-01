@@ -12,4 +12,7 @@ class EmpresaSerializer(serializers.ModelSerializer):
         model = Empresa
         fields = '__all__'
 
-
+class EmpresaSerializerGenerics(serializers.ModelSerializer):
+    class Meta: 
+        model = Empresa
+        fields = ["id", "nombre"]

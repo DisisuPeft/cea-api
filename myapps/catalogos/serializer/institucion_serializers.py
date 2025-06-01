@@ -5,3 +5,9 @@ class InstitucionAcademicaSerializer(serializers.ModelSerializer):
     class Meta:
         model = InstitucionAcademica
         fields = '__all__'
+        
+        
+class InstitucionSerializarGeneric(serializers.ModelSerializer):
+    class Meta:
+        model = InstitucionAcademica
+        fields = ["id", "nombre"]
