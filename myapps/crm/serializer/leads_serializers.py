@@ -12,6 +12,7 @@ from myapps.control_escolar.serializer import ProgramaEducativoSerializer
 from .campania_serializers import CampaniaProgramaSerializer
 from .notas_serializers import NotasSerializer
 from rest_framework.exceptions import ValidationError
+from myapps.authentication.models import UserCustomize
 # from myapps.sistema.serializer import
 
 class LeadsSerializer(serializers.ModelSerializer):
@@ -80,3 +81,14 @@ class LeadCreateLandingSerializer(serializers.ModelSerializer):
             raise ValidationError("lead no creado")
         lead.save()
         return lead
+    
+    
+class VendedorSerializer(serializers.ModelSerializer):
+    perfil = serializers.SerializerMethodField()
+    class Meta:
+        model = UserCustomize
+        fields = ["id", "email", "perfil"]
+        
+        
+    def get_perfil(self, obj):
+        return {"id": obj.profile.id, "nombre_completo": f"{obj.profile.nombre} {obj.profile.apellidoP} {obj.profile.apellidoM or ''}"} if obj.profile else None

@@ -26,7 +26,7 @@ from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from ..models import Lead, CampaniaPrograma, Pipline, Estatus, Fuentes, Etapas
-from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, LeadCreateLandingSerializer, LeadRecentSerializer
+from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, LeadCreateLandingSerializer, LeadRecentSerializer, VendedorSerializer
 from django.utils import timezone
 from django.db.models import Q
 from ..pagination import LeadPagination
@@ -166,3 +166,19 @@ class CreateLeadFromLanding(APIView):
             return Response("En breve un asesor se pondra en contacto contigo", status=status.HTTP_200_OK)
         else: 
             return Response(lead_serializer.errors, status=status.HTTP_200_OK)
+        
+        
+        
+class GetVendedoresView(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
+    authentication_classes = [CustomJWTAuthentication]
+    
+    def get(self, request):
+        user = User.objects.filter(roleID__name="Vendedor")
+        
+        if not user:
+            return Response("no query found", status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = VendedorSerializer(user, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)

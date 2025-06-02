@@ -1,7 +1,7 @@
-from .leads_serializers import LeadsSerializer, LeadCreateLandingSerializer, LeadRecentSerializer
+from .leads_serializers import LeadsSerializer, LeadCreateLandingSerializer, LeadRecentSerializer, VendedorSerializer
 from .estatus_serializer import EstatusSerializer 
 from .etapas_serializers import EtapaSerializer
 from .fuentes_serializer import FuenteSerializer
 from .campania_serializers import CampaniaSerializer, CampaniaProgramaSerializer
-from .pipeline_serializers import PipelineSerializer
+from .pipeline_serializers import PipelineSerializer, PipelineSerializerCreate, PipelineSerializerUpdate
 from .notas_serializers import NotasSerializer
