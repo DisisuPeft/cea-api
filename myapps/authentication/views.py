@@ -137,7 +137,7 @@ class RegisterView(APIView):
             data={
                 "email": request.data["email"],
                 "password": request.data["password"],
-                "role": [1],
+                # "role": [1],
             }  # aqui debo poner por defecto 3
         )
         #
@@ -199,7 +199,7 @@ class CheckUser(APIView):
         # print(user)
         if auth.is_authenticated:
             return Response(
-                {"is_auth": True, "usuario": serializer.data}, status=status.HTTP_200_OK
+                serializer.data, status=status.HTTP_200_OK
             )
         else:
             return Response(

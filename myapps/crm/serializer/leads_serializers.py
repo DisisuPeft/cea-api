@@ -25,16 +25,37 @@ class LeadsSerializer(serializers.ModelSerializer):
     estatus = serializers.SerializerMethodField()
     campania = CampaniaProgramaSerializer(read_only=True)
     notas = NotasSerializer(read_only=True, many=True)
-    
+
     class Meta:
         model = Lead
-        fields = '__all__'
+        fields = [
+            "id",     
+            "nombre",
+            "correo",
+            "telefono",
+            "fuente",
+            "interesado_en",
+            "etapa",
+            "etapa_id",
+            "estatus",
+            "vendedor_asignado",
+            "pipeline",
+            "campania",
+            "tiempo_primera_respuesta",
+            "empresa",
+            "institucion",
+            "etapa_anterior",
+            "notas"
+        ]
         
     def get_fuente(self, obj):
         return obj.fuente.nombre if obj.fuente else None
     
     def get_etapa(self, obj):
         return obj.etapa.nombre if obj.etapa else None
+    
+    def get_etapa_id(self, obj):
+        return obj.etapa.id if obj.etapa else None       
     
     def get_estatus(self, obj):
         return obj.estatus.nombre if obj.estatus else None
