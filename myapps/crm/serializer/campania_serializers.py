@@ -13,11 +13,13 @@ from myapps.control_escolar.serializer import ProgramaEducativoSerializer
 # from myapps.sistema.serializer import
 
 class CampaniaSerializer(serializers.ModelSerializer):
+    programa_campania = serializers.SerializerMethodField()
     class Meta:
         model = Campania
-        fields = '__all__'
+        fields = ["id", "nombre", "descripcion", "fecha_inicio", "fecha_fin", "activa", "programa_campania"]
         
-        
+    def get_programa_campania(self, obj):
+        return {'id': obj.programa_campania} if obj.programa_campania else None
 class CampaniaProgramaSerializer(serializers.ModelSerializer):
     campania = serializers.SerializerMethodField()
     programa = serializers.SerializerMethodField()
