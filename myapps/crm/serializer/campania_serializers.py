@@ -19,7 +19,9 @@ class CampaniaSerializer(serializers.ModelSerializer):
         fields = ["id", "nombre", "descripcion", "fecha_inicio", "fecha_fin", "activa", "programa_campania"]
         
     def get_programa_campania(self, obj):
-        return {'id': obj.programa_campania} if obj.programa_campania else None
+        return [{"id": p.id, "presupuesto": p.costo_asignado} for p in obj.programa_campania.all()]
+    
+    
 class CampaniaProgramaSerializer(serializers.ModelSerializer):
     campania = serializers.SerializerMethodField()
     programa = serializers.SerializerMethodField()

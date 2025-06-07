@@ -14,3 +14,4 @@ class TabsModulo(models.Model):
     icon = models.CharField(max_length=50, null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
+    orden = models.IntegerField(null=True, blank=True)

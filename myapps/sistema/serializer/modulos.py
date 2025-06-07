@@ -14,14 +14,16 @@ class ModulosSerializer(serializers.ModelSerializer):
     # role = RoleCustomizeSerializer(many=True, required=False)
     class Meta:
         model = Modulos
-        fields = ["id", "name", "description", "icon","bgColor", "textColor", "route"]
+        fields = ["id", "name", "description", "icon","bgColor", "textColor", "route", "orden"]
+        
+        
 
 class TabsModuloSerializer(serializers.ModelSerializer):
     modulo = ModulosSerializer(required=False)
     permiso = PermissionCustomizeSerializer(many=True, required=False)
-    user = UserCustomizeSerializer(many=True, required=False)
+    # user = UserCustomizeSerializer(many=True, required=False)
     class Meta:
         model = TabsModulo
-        fields = ["id", "name", "description", "modulo", "permiso", "href", "icon", "user"]
+        fields = ["id", "name", "description", "modulo", "permiso", "href", "icon", "orden"]
 
 

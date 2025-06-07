@@ -1,7 +1,7 @@
 from django.urls import path, re_path
 from .views import (
     LeadsView, LeadView, CreateLeadFromLanding, RecentLeadsView, EstadisticsLeadsView, PipelineAllView, GetEmpresaView, GetProgramsView, GetUnidadAcademicaView, PipelineUpdateView,
-    GetFuentesView, GetEstatusView, UpdateFuentesView, UpdateEstatusView, GetEtapasPipelineView, GetVendedoresView
+    GetFuentesView, GetEstatusView, UpdateFuentesView, UpdateEstatusView, GetEtapasPipelineView, GetVendedoresView, CampaniaView
 )
 
 urlpatterns = [
@@ -24,5 +24,6 @@ urlpatterns = [
     path("crm/estatus/update/<int:id>", UpdateEstatusView.as_view(), name="patch"),
     path("crm/etapas/<int:id>/", GetEtapasPipelineView.as_view(), name="get"),
     path("crm/vendedores/", GetVendedoresView.as_view(), name="get"),
+    path('crm/campanias/', CampaniaView.as_view(), name="get")
     # path("auth/user/", CheckUser.as_view()),
 ]

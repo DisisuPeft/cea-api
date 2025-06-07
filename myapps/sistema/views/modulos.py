@@ -38,8 +38,8 @@ class Modulosview(APIView):
         # print(user)
         roles = user.roleID.all()
         
-        modulos_user = Modulos.objects.filter(usuario=user.id).distinct()
-        modulos_rol = Modulos.objects.filter(role__in=roles).distinct()
+        modulos_user = Modulos.objects.filter(usuario=user.id).distinct().order_by('orden')
+        modulos_rol = Modulos.objects.filter(role__in=roles).distinct().order_by('orden')
         
         # modulos = (modulos_user | modulos_rol).distinct()
         if modulos_user.exists() and modulos_rol.exists():
@@ -64,8 +64,8 @@ class TabsView(APIView):
         permissions = user.permission.all()
         # print(permissions)
         # permisos = Permissions.objects.filter(permiso__in=user.permission.all()).distinct()
-        tabs_user = TabsModulo.objects.filter(user=user.id).filter(modulo=id).distinct()
-        tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=id).distinct()
+        tabs_user = TabsModulo.objects.filter(user=user.id).filter(modulo=id).distinct().order_by('orden')
+        tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=id).distinct().order_by('orden')
         
         # print(tabs_user, tabs_permiso)
         if tabs_user.exists() and tabs_permiso.exists():

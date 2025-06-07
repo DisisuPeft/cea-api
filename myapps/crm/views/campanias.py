@@ -32,7 +32,7 @@ class CampaniaView(APIView):
         time = timezone.now()
         campanias = Campania.objects.filter(
             Q(fecha_inicio__lte=time) & Q(fecha_fin__gte=time)
-        )
+        ).prefetch_related('programa_campania')
         
         if not campanias:
             return Response("no query found", status=status.HTTP_400_BAD_REQUEST)

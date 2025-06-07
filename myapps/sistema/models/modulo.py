@@ -14,3 +14,4 @@ class Modulos(models.Model):
     usuario = models.ManyToManyField(UserCustomize, related_name="user_menu", null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
+    orden = models.IntegerField(blank=True, null=True)
