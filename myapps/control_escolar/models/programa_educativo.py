@@ -2,6 +2,7 @@ from django.db import models
 from myapps.catalogos.models import InstitucionAcademica
 from myapps.authentication.models import UserCustomize
 from myapps.maestros.models import Maestro
+from myapps.catalogos.models import Ciclos, Periodos
 
 class TipoPrograma(models.Model):
     nombre = models.CharField(max_length=100)
@@ -24,7 +25,8 @@ class ProgramaEducativo(models.Model):
     duracion_horas = models.IntegerField(blank=True, null=True)
     fecha_inicio = models.DateField(blank=True, null=True)
     fecha_fin = models.DateField(blank=True, null=True)
-    
+    # ciclo = models.ForeignKey(Ciclos, on_delete=models.SET_NULL, related_name="programa_educativo", null=True, blank=True)
+    periodo_imparticion = models.ForeignKey(Periodos, on_delete=models.SET_NULL, related_name="programa_educativo", null=True, blank=True)
     horario = models.CharField(max_length=200, blank=True, null=True)  # ej. Sábados y Domingos de 8 a 14 hrs
     costo_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     costo_mensualidad = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)

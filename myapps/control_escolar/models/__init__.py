@@ -25,3 +25,4 @@ from .programa_educativo import (
     CalendarioModulo,
     SubModulo,
 )
+from .eventos import Evento, TipoEvento

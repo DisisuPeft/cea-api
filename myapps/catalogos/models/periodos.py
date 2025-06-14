@@ -6,5 +6,6 @@ class Periodos(models.Model):
     ciclo = models.ForeignKey(Ciclos, on_delete=models.CASCADE, related_name="periodos")
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
+    estado = models.IntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True, blank=True)
