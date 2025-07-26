@@ -1,1 +1,1 @@
-from .profile_serializer import ProfileSerializer
+from .profile_serializer import ProfileSerializer, ProfileEditSerializer

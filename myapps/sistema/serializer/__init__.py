@@ -1,2 +1,2 @@
-from .modulos import TabsModuloSerializer, ModulosSerializer
+from .modulos import TabsModuloSerializer, ModulosSerializer, PlataformaModuloSerializer, PestaniaPlataformaSerializer
 from .empresa_serializer import EmpresaSerializer, EmpresaSerializerGenerics

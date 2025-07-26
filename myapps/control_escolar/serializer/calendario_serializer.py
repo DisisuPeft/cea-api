@@ -10,8 +10,7 @@ class CicloSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ciclos
         fields = ["id", "name", "fecha_inicio", "fecha_fin", "estado"] #0 - sin iniciar // 1 iniciado // 2 finalizado // 99 eliminado
-        
-        
+                     
         def create(self, validated_data):
             try:
                 with transaction.atomic():
@@ -19,8 +18,31 @@ class CicloSerializer(serializers.ModelSerializer):
                     return ciclo
             except Exception as e:
                 raise Exception(f"Rollback database insertion: {e}")
+         
+
+
+class CicloSerializerQueryState(serializers.ModelSerializer):
+    class Meta:
+        model = Ciclos
+        fields = ["id", "name"] #0 - sin iniciar // 1 iniciado // 2 finalizado // 99 eliminado
+        
+
+
             
-            
+class CicloParamSerializer(serializers.ModelSerializer):
+    rango_fechas = serializers.SerializerMethodField()
+    class Meta:
+        model = Ciclos
+        fields = ["id", "name", "rango_fechas", "estado"] #0 - sin iniciar // 1 iniciado // 2 finalizado // 99 eliminado         
+    
+    def get_rango_fechas(self, obj):
+        if not obj.fecha_fin or obj.fecha_inicio.date() == obj.fecha_fin.date():
+            # Evento de un solo día
+            return date_format(obj.fecha_inicio, format='DATE_FORMAT')
+        else:
+            inicio = date_format(obj.fecha_inicio, format='DATE_FORMAT')
+            fin = date_format(obj.fecha_fin, format='DATE_FORMAT')
+            return f"{inicio} al {fin}"
 
 
 class EventoSerializer(serializers.ModelSerializer):

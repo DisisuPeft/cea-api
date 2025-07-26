@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from .views.modulos import Modulosview, TabsView
+from .views.modulos import Modulosview, TabsView, PestaniaEstudianteView
 
 urlpatterns = [
     # re_path(
@@ -8,7 +8,8 @@ urlpatterns = [
     #     name='provider-auth'
     # ),
     path("menu/all/", Modulosview.as_view(), name="get"),
-    path("tabs/all/<int:id>", TabsView.as_view(), name="get")
+    path("tabs/all/<int:id>", TabsView.as_view(), name="get"),
+    path("plataforma/pestanias/", PestaniaEstudianteView.as_view(), name="get")
     # path("auth/refresh/", CustomTokenRefreshView.as_view()),
     # path("auth/verify/", CustomTokenVerifyView.as_view()),
     # path("auth/register/", RegisterView.as_view()),

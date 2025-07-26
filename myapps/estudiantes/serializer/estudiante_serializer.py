@@ -1,15 +1,17 @@
 from rest_framework import serializers
 from ..models import Estudiante
+from myapps.perfil.models.user_profile import User as Profile
 from rest_framework.exceptions import ValidationError
-from myapps.perfil.serializer import ProfileSerializer
+from myapps.perfil.serializer import ProfileSerializer, ProfileEditSerializer
 
 class EstudianteSerializer(serializers.ModelSerializer):
     # lugar_nacimiento_name = serializers.SerializerMethodField()
     # municipio_name = serializers.SerializerMethodField()
-    perfil = ProfileSerializer()
+    # user = serializers.CharField(required=False)
+    perfil = ProfileEditSerializer()
     class Meta:
         model = Estudiante
-        fields = ["id", "curp", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "user", "fecha_actualizacion", "fecha_creacion", "email", "perfil", "municipio"]
+        fields = ["id", "curp", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "email", "perfil", "municipio"]
     
     def create(self, validated_data):
         profile_id = validated_data.pop('perfil')
@@ -23,16 +25,22 @@ class EstudianteSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         perfil = validated_data.pop('perfil')
-        
+        # edad = validated_data.pop('perfil')
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         
         instance.save()
         
         if perfil:
-            for attr, value in perfil.items():
-                setattr(instance.perfil, attr, value)
-            instance.perfil.save()
+            existe = getattr(instance, "perfil", None)
+            if existe:
+                for attr, value in perfil.items():
+                    setattr(instance.perfil, attr, value)
+                instance.perfil.save()
+            else:
+                profile = Profile.objects.create(**perfil)
+                instance.perfil = profile
+                instance.save()
         return instance
         
     def get_lugar_nacimiento_name(self, obj):

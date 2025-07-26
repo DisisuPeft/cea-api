@@ -54,3 +54,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.save()
         # print(instance) 
         return instance
+    
+    
+class ProfileEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["nombre", "apellidoP", "apellidoM", "edad", "fechaNacimiento", "genero", "nivEdu","telefono", "user"]
+       

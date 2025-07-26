@@ -90,15 +90,15 @@ class StudentUpdateView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
-    def get(self, request, id):
-        estudiante = Estudiante.objects.filter(id=id).select_related("lugar_nacimiento", "municipio")
+    def get(self, id):
+        estudiante = Estudiante.objects.filter(id=id)
         if not estudiante:
             return Response("Estudiantes not found", status=status.HTTP_404_NOT_FOUND)
-        serializer = EstudianteEditSerializer(estudiante[0])
+        serializer = EstudianteSerializer(estudiante[0])
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    def patch(self, request):
-        if request.data and request.data['id']:
+    def patch(self, request, id):
+        if request.data and id:
             estudiante = Estudiante.objects.get(id=request.data['id'])
             if not estudiante:
                 return Response("Student not found", status=status.HTTP_404_NOT_FOUND)

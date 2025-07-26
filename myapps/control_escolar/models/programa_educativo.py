@@ -3,6 +3,7 @@ from myapps.catalogos.models import InstitucionAcademica
 from myapps.authentication.models import UserCustomize
 from myapps.maestros.models import Maestro
 from myapps.catalogos.models import Ciclos, Periodos
+from myapps.estudiantes.models import Estudiante
 
 class TipoPrograma(models.Model):
     nombre = models.CharField(max_length=100)
@@ -30,7 +31,7 @@ class ProgramaEducativo(models.Model):
     horario = models.CharField(max_length=200, blank=True, null=True)  # ej. Sábados y Domingos de 8 a 14 hrs
     costo_inscripcion = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     costo_mensualidad = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    
+    inscripcion = models.ManyToManyField(Estudiante, related_name="program", null=True, blank=True)
     activo = models.IntegerField()
     maestro = models.ForeignKey(Maestro, on_delete=models.CASCADE, related_name="programas", null=True, blank=True)
     modalidad = models.ForeignKey(ModalidadesPrograma, on_delete=models.CASCADE, related_name="programas", null=True, blank=True)
@@ -154,5 +155,6 @@ class SubModulo(models.Model):
     titulo = models.CharField(max_length=300)
     descripcion = models.TextField(blank=True, null=True)
     orden = models.IntegerField(default=0)
+    path_class = models.CharField(null=True, blank=True, max_length=100)
     fecha_creacion = models.DateTimeField(auto_now_add=True, null=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)

@@ -1,1 +1,1 @@
-from .modulos import Modulosview, TabsView
+from .modulos import Modulosview, TabsView, PestaniaEstudianteView

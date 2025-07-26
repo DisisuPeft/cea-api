@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/', include('myapps.crm.urls')),
     path('api/', include('myapps.estudiantes.urls')),
     path('api/', include('myapps.maestros.urls')),
-    path('api/', include('myapps.control_escolar.urls'))
+    path('api/', include('myapps.control_escolar.urls')),
+    path('api/', include('myapps.plataforma.urls'))
     # path('perfil', perfil_views.getprofile, name='perfil'),
 ]

@@ -32,3 +32,4 @@ class GetProgramasCatalogView(APIView):
         
         return paginator.get_paginated_response(serializer.data)
         
+    

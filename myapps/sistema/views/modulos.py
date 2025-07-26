@@ -26,12 +26,13 @@ from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from myapps.sistema.models import Modulos, TabsModulo
-from myapps.sistema.serializer import ModulosSerializer, TabsModuloSerializer
+from myapps.sistema.serializer import ModulosSerializer, TabsModuloSerializer, PestaniaPlataformaSerializer
 # Create your views here.
 
 class Modulosview(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
     authentication_classes = [CustomJWTAuthentication]
+    
     
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -55,7 +56,7 @@ class Modulosview(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
    
 class TabsView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
     authentication_classes = [CustomJWTAuthentication]  
     
     def get(self, request, id):
@@ -82,14 +83,34 @@ class TabsView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class PestaniaEstudianteView(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    authentication_classes = [CustomJWTAuthentication]  
 
+    def get(self, request):
+        user = request.user
+        permissions = user.permission.all()
+        
+        modulo = Modulos.objects.filter(usuario=user.id).filter(name="Alumnos").first()
+        # print(modulo)
+        
+        tabs_user = TabsModulo.objects.filter(user=user.id).filter(modulo=modulo.id).distinct().order_by('orden')
+        tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=modulo.id).distinct().order_by('orden')
+        
+        
+        if tabs_user.exists() and tabs_permiso.exists():
+            tabs = (tabs_user | tabs_permiso).distinct()
+        elif tabs_user.exists():
+            tabs = tabs_user
+        else:
+            tabs = tabs_permiso
 
+        if not tabs:
+            return Response("Error al obtener al obtener los submenus, verifica con el administrador", status=status.HTTP_404_NOT_FOUND)
 
+        serializer = PestaniaPlataformaSerializer(tabs, many=True)
 
-
-
-
-
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
         
 #         order_field = request.GET.get('sort_by', 'name')  # Valor por defecto 'name'

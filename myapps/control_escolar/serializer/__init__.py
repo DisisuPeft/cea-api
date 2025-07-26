@@ -1,8 +1,13 @@
 from .programa_educativo_serializer import (
     ProgramaEducativoSerializer,
-    ProgramaEducativoCatalogSerializer
+    ProgramaEducativoCatalogSerializer,
+    ProgramaEducativoCardSerializer,
+    ProgramaShowSerializer,
+    ModuloEducativoViewSerializer
 )
 
 from .calendario_serializer import (
-    CicloSerializer
+    CicloSerializer,
+    CicloParamSerializer,
+    CicloSerializerQueryState
 )
