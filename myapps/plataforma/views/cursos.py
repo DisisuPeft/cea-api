@@ -18,7 +18,7 @@ from myapps.control_escolar.serializer import ProgramaEducativoCatalogSerializer
 from myapps.control_escolar.pagination import ProgramaPagination
 
 class CursoView(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
     authentication_classes = [CustomJWTAuthentication]
 # Faltaria agregar como medir el avance
     def get(self, request, *args, **kwargs):
@@ -39,7 +39,7 @@ class CursoView(APIView):
 
 
 class CursoPaginatedView(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
     authentication_classes = [CustomJWTAuthentication]
 
     def get(self, request, *args, **kwargs):
@@ -65,7 +65,7 @@ class CursoPaginatedView(APIView):
     
     
 class CursoPanelView(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
     authentication_classes = [CustomJWTAuthentication]
     def get(self, request, id):
         accion = request.query_params.get("accion", None)

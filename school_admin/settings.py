@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
 from datetime import timedelta
 from django.core.management.utils import get_random_secret_key
@@ -50,6 +50,12 @@ DEBUG = getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
+DEBUG = 'RENDER' not in os.environ  # DEBUG=False en Render
+ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    
 # Application definition
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -94,6 +100,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -123,6 +130,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "school_admin.wsgi.application"
 
+STATIC_URL = '/static/'
+if not DEBUG:
+    import os
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -133,17 +146,22 @@ WSGI_APPLICATION = "school_admin.wsgi.application"
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "cea_db_test",
+#         "USER": "admin",
+#         "PASSWORD": "@dm1n2025",
+#         "HOST": "localhost",
+#         "PORT": "3306",
+#     }
+# }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "cea_db_test",
-        "USER": "admin",
-        "PASSWORD": "@dm1n2025",
-        "HOST": "localhost",
-        "PORT": "3306",
-    }
+    'default': dj_database_url.config(
+        default='postgresql://cea_db_ftqe_user:7xmStSxmmfRh5rwVWRa9iF9IKi8IBkn2@dpg-d2d65bjuibrs7399nasg-a/cea_db_ftqe',
+        conn_max_age=600,
+    )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

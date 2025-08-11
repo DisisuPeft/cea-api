@@ -15,7 +15,7 @@ from myapps.authentication.authenticate import CustomJWTAuthentication
 from myapps.estudiantes.models import Estudiante
 
 class StudentUpdateProfile(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
     def get(self, request, id):
@@ -32,7 +32,6 @@ class StudentUpdateProfile(APIView):
         if request.data and id:
             estudiante = Estudiante.objects.get(user__id=id)
 
-            print(request.data['perfil'])
             update_serializer = EstudianteSerializer(estudiante, data=request.data, partial=True)
             # print(update_serializer.data)   
             if update_serializer.is_valid():
