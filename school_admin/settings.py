@@ -130,12 +130,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "school_admin.wsgi.application"
 
-STATIC_URL = '/static/'
-if not DEBUG:
-    import os
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATIC_URL = '/static/'
+# if not DEBUG:
+#     import os
+#     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
