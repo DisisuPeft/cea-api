@@ -51,7 +51,7 @@ ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
 DEBUG = 'RENDER' not in os.environ  # DEBUG=False en Render
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -130,32 +130,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "school_admin.wsgi.application"
 
-# STATIC_URL = '/static/'
-# if not DEBUG:
-#     import os
-#     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-#     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "cea_db_test",
-#         "USER": "admin",
-#         "PASSWORD": "@dm1n2025",
-#         "HOST": "localhost",
-#         "PORT": "3306",
-#     }
-# }
 DATABASES = {
     'default': dj_database_url.config(
         default='postgresql://cea_db_ftqe_user:7xmStSxmmfRh5rwVWRa9iF9IKi8IBkn2@dpg-d2d65bjuibrs7399nasg-a/cea_db_ftqe',
@@ -237,3 +213,27 @@ AUTH_USER_MODEL = "authentication.UserCustomize"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'  # o os.path.join(BASE_DIR, 'media')
 # https://psicotest.app/ligapsicometria/26852_72050
+
+
+
+# utils
+
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "cea_db_test",
+#         "USER": "admin",
+#         "PASSWORD": "@dm1n2025",
+#         "HOST": "localhost",
+#         "PORT": "3306",
+#     }
+# }
