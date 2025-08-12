@@ -17,7 +17,7 @@ from myapps.authentication.models import (Roles)
 
 class GeneroView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]),  IsAuthenticated]
     
     def get(self, request, *args, **kwargs):
         generos = Genero.objects.all()

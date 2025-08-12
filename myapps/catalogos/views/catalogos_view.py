@@ -16,7 +16,7 @@ from myapps.maestros.serializer import EspecialidadViewSerializer, EstatusViewSe
 
 class EstadosRepublicaView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]),  IsAuthenticated]
     
     def get(self, request, *args, **kwargs):
         entidades = EstadosRepublica.objects.all()
@@ -28,7 +28,7 @@ class EstadosRepublicaView(APIView):
 
 class MunicipioView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]),  IsAuthenticated]
     
     def get(self, request, id):
         # entidad_id = request.GET.get('id')
