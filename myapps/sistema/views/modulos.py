@@ -84,7 +84,7 @@ class TabsView(APIView):
 
 
 class PestaniaEstudianteView(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
     authentication_classes = [CustomJWTAuthentication]  
 
     def get(self, request):
