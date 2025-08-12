@@ -33,7 +33,7 @@ class ProgramaEducativo(models.Model):
     costo_mensualidad = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     inscripcion = models.ManyToManyField(Estudiante, related_name="program", null=True, blank=True)
     activo = models.IntegerField()
-    maestro = models.ManyToManyField(Maestro, on_delete=models.CASCADE, related_name="programas", null=True, blank=True)
+    maestro = models.ManyToManyField(Maestro, related_name="programas", null=True, blank=True)
     modalidad = models.ForeignKey(ModalidadesPrograma, on_delete=models.CASCADE, related_name="programas", null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
