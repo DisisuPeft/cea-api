@@ -6,6 +6,7 @@ pip install --upgrade pip
 pip install -r requeriments.txt
 
 # 2. Ejecutar migraciones
+python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 
 # 3. Recolectar estáticos
