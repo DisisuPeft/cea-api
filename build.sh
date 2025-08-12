@@ -9,4 +9,4 @@ pip install -r requeriments.txt
 python manage.py migrate --noinput
 
 # 3. Recolectar estáticos
-python manage.py collectstatic --noinput
+# python manage.py collectstatic --noinput
