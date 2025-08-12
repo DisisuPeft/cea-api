@@ -130,14 +130,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "school_admin.wsgi.application"
 
-
-
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://cea_db_ftqe_user:7xmStSxmmfRh5rwVWRa9iF9IKi8IBkn2@dpg-d2d65bjuibrs7399nasg-a/cea_db_ftqe',
         conn_max_age=600,
+        ssl_require=not DEBUG  # en Render/producción suele convenir True
     )
 }
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default='postgresql://cea_db_ftqe_user:7xmStSxmmfRh5rwVWRa9iF9IKi8IBkn2@dpg-d2d65bjuibrs7399nasg-a/cea_db_ftqe',
+#         conn_max_age=600,
+#     )
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
