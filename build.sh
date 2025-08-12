@@ -3,7 +3,7 @@ set -o errexit  # si un comando falla, detener todo el script
 
 # 1. Instalar dependencias
 pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r requeriments.txt
 
 # 2. Ejecutar migraciones
 python manage.py migrate --noinput

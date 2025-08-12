@@ -21,4 +21,4 @@ services:
       - key: WEB_CONCURRENCY
         value: 4
       - key: DJANGO_SETTINGS_MODULE
-        value: "cea_api.settings"
+        value: "school_admin.settings"
