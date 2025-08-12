@@ -137,7 +137,7 @@ class RegisterView(APIView):
             data={
                 "email": request.data["email"],
                 "password": request.data["password"],
-                "role": [1],
+                "role": [2],
             }  # aqui debo poner por defecto 3
         )
         #
