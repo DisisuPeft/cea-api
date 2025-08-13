@@ -101,3 +101,17 @@ class CursoPanelView(APIView):
             return Response("Query not found", status=status.HTTP_404_NOT_FOUND)
         serializer = ProgramaShowSerializer(curso)
         return Response([serializer.data], status=status.HTTP_200_OK)
+    
+    
+class CuntCursos(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
+    authentication_classes = [CustomJWTAuthentication]
+    
+    def get(self, request):
+        estudiante_user = request.user.id
+        
+        programas_count = ProgramaEducativo.objects.filter(inscripcion=estudiante_user).count()
+        
+        return Response(programas_count, status=status.HTTP_200_OK)
+        
+        

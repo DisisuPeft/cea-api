@@ -1,2 +1,2 @@
-from .cursos import CursoView, CursoPaginatedView, CursoPanelView
+from .cursos import CursoView, CursoPaginatedView, CursoPanelView, CuntCursos
 from .profile import StudentUpdateProfile
