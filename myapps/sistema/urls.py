@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from .views.modulos import Modulosview, TabsView, PestaniaEstudianteView
+from .views import ManageUsersview
 
 urlpatterns = [
     # re_path(
@@ -9,11 +10,7 @@ urlpatterns = [
     # ),
     path("menu/all/", Modulosview.as_view(), name="get"),
     path("tabs/all/<int:id>", TabsView.as_view(), name="get"),
-    path("plataforma/pestanias/", PestaniaEstudianteView.as_view(), name="get")
-    # path("auth/refresh/", CustomTokenRefreshView.as_view()),
-    # path("auth/verify/", CustomTokenVerifyView.as_view()),
-    # path("auth/register/", RegisterView.as_view()),
-    # path("logout/", LogoutView.as_view()),
-    # # path('auth/user/', ProfileView.as_view()),
-    # path("auth/user/", CheckUser.as_view()),
+    path("plataforma/pestanias/", PestaniaEstudianteView.as_view(), name="get"),
+
+    path("/retrieve-users/", ManageUsersview.as_view(), name="get")
 ]

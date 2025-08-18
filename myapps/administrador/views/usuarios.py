@@ -58,18 +58,6 @@ class UsuariosAdministrador(APIView):
                 if p in request.data and request.data[p]:
                     perfil_dict[p] = request.data[p]
             perfil_dict['user'] = user_instance.id
-            # perfil_data = {
-            #     'nombre': request.data['nombre'],
-            #     'apellidoP': request.data['apellidoP'],
-            #     'apellidoM': request.data['apellidoM'], 
-            #     'edad': request.data['edad'], 
-            #     'fechaNacimiento': request.data['fechaNacimiento'], 
-            #     'genero': request.data['genero'], 
-            #     'nivEdu': request.data['nivEdu'], 
-            #     'telefono':request.data['telefono'],
-            #     'user': user_instance.id,
-            # }
-            # print(user_instance.id)
             perfil_serializer = ProfileSerializer(data=perfil_dict)
             if perfil_serializer.is_valid():
                 perfil_serializer.save()

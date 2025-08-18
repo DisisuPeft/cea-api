@@ -1,26 +1,17 @@
 from rest_framework import serializers
-from ..models import Estudiante
+from myapps.estudiantes.models import Estudiante
 from myapps.perfil.models.user_profile import User as Profile
 from rest_framework.exceptions import ValidationError
 from myapps.perfil.serializer import ProfileSerializer, ProfileEditSerializer
-from myapps.authentication.models import UserCustomize
-
-
-class UserEstudentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserCustomize
-        fields = ["id", "email"]
-
 
 class EstudianteSerializer(serializers.ModelSerializer):
     # lugar_nacimiento_name = serializers.SerializerMethodField()
     # municipio_name = serializers.SerializerMethodField()
-    # user = serializers.CharField(required=False)
+    user = serializers.CharField(required=False)
     perfil = ProfileEditSerializer()
-    user = UserEstudentSerializer()
     class Meta:
         model = Estudiante
-        fields = ["id", "curp", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "email", "perfil", "municipio", "user"]
+        fields = ["id", "curp", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "email", "perfil", "municipio"]
     
     def create(self, validated_data):
         profile_id = validated_data.pop('perfil')
