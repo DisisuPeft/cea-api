@@ -12,5 +12,5 @@ urlpatterns = [
     path("tabs/all/<int:id>", TabsView.as_view(), name="get"),
     path("plataforma/pestanias/", PestaniaEstudianteView.as_view(), name="get"),
 
-    path("/retrieve-users/", ManageUsersview.as_view(), name="get")
+    path("plataform/retrieve-users/", ManageUsersview.as_view(), name="get")
 ]
