@@ -29,6 +29,7 @@ from myapps.estudiantes.models import Estudiante
 from myapps.sistema.pagination import UsersPagination
 from myapps.estudiantes.serializer import EstudianteSerializer
 from django.db.models import Q
+from myapps.sistema.helpers import normalize_q, tokenize
 # Create your views here.
 
 class ManageUsersview(APIView):
@@ -38,23 +39,33 @@ class ManageUsersview(APIView):
     def get(self, request, *args, **kwargs):
         # Se obtiene los usuarios a estudiante
         user = request.user
-        q = (request.GET.get("q") or "").strip()
         
+        q_raw = request.GET.get("q") 
+        
+        q = (q_raw or "").strip()
+        
+        if q.lower() in {"null", "undefined", "none", "nan"}:
+            q = ""
+        
+        # terms = [t for t in q.split() if t]
+        
+        
+        # print(terms)
         
         queryset = (
-            Estudiante.objects.exclude(user=user).select_related("user", "perfil", "lugar_nacimiento", "municipio").order_by("perfil__nombre", "perfil__apellidoP", "id")
+            Estudiante.objects.exclude(user=user).select_related("user", "perfil", "lugar_nacimiento", "municipio").order_by("perfil__nombre", "id")
         )
-        
+
         if q:
             queryset = queryset.filter(
-                Q(perfil__nombre__icontains=q) | Q(user__apellidoP__icontains=q)
+                Q(perfil__nombre__icontains=q) | Q(perfil__apellidoP__icontains=q) | Q(perfil__apellidoM__icontains=q)
             )
         
         # if not estudiantes:
         #     return Response("No existen estudiantes", status=status.HTTP_404_NOT_FOUND)
-        
+  
         paginator = UsersPagination()
-        
+
         result = paginator.paginate_queryset(queryset=queryset, request=request)
         serializer = EstudianteSerializer(result, many=True)
         

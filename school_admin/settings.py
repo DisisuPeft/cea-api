@@ -129,7 +129,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "school_admin.wsgi.application"
-
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "cea_db_test",
+#         "USER": "admin",
+#         "PASSWORD": "@dm1n2025",
+#         "HOST": "localhost",
+#         "PORT": "3306",
+#     }
+# }
 DATABASES = {
     'default': dj_database_url.config(
         conn_max_age=600,
