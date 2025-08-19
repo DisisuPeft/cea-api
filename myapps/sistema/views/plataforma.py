@@ -37,7 +37,7 @@ class ManageUsersview(APIView):
     authentication_classes = [CustomJWTAuthentication]
     
     def get(self, request, *args, **kwargs):
-        # Se obtiene los usuarios a estudiante
+        
         user = request.user
         
         q_raw = request.GET.get("q") 
@@ -46,12 +46,7 @@ class ManageUsersview(APIView):
         
         if q.lower() in {"null", "undefined", "none", "nan"}:
             q = ""
-        
-        # terms = [t for t in q.split() if t]
-        
-        
-        # print(terms)
-        
+                
         queryset = (
             Estudiante.objects.exclude(user=user).select_related("user", "perfil", "lugar_nacimiento", "municipio").order_by("perfil__nombre", "id")
         )
@@ -61,8 +56,6 @@ class ManageUsersview(APIView):
                 Q(perfil__nombre__icontains=q) | Q(perfil__apellidoP__icontains=q) | Q(perfil__apellidoM__icontains=q)
             )
         
-        # if not estudiantes:
-        #     return Response("No existen estudiantes", status=status.HTTP_404_NOT_FOUND)
   
         paginator = UsersPagination()
 
@@ -70,6 +63,19 @@ class ManageUsersview(APIView):
         serializer = EstudianteSerializer(result, many=True)
         
         return paginator.get_paginated_response(serializer.data)
+    
+    def post(self, request):
+        if not request.data:
+            return Response("The request is empty", status=status.HTTP_400_BAD_REQUEST)
+        
+        estudiante = EstudianteSerializer(data=request.data)
+        
+        if estudiante.is_valid():
+            return Response("Usuario creado con exito", status=status.HTTP_201_CREATED)
+        else:
+            return Response(estudiante.errors, status=status.HTTP_400_BAD_REQUEST)    
+        
+        
    
 # class UpdateUsersView(APIView):
 #     permission_classes = [IsAuthenticated]

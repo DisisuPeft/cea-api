@@ -20,21 +20,28 @@ class EstudianteSerializer(serializers.ModelSerializer):
     user = UserEstudentSerializer()
     class Meta:
         model = Estudiante
-        fields = ["id", "curp", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "email", "perfil", "municipio", "user"]
+        fields = ["id", "curp", "rfc", "especialidad", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "email", "perfil", "municipio", "user"]
     
     def create(self, validated_data):
         profile_id = validated_data.pop('perfil')
+        user_id = validated_data.pop('user')
         # print(validated_data)
         estudiante = Estudiante.objects.create(**validated_data)
         if not estudiante:
             raise ValidationError("Estudiante no creado")
+        
+        if user_id:
+            estudiante.user = user_id
+        
         estudiante.perfil = profile_id #instancia
+        
         estudiante.save()
         return estudiante
     
     def update(self, instance, validated_data):
         perfil = validated_data.pop('perfil')
-        # edad = validated_data.pop('perfil')
+        usuario = validated_data.pop("user")
+        
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         
@@ -50,6 +57,18 @@ class EstudianteSerializer(serializers.ModelSerializer):
                 profile = Profile.objects.create(**perfil)
                 instance.perfil = profile
                 instance.save()
+                
+        if usuario:
+            exist = getattr(instance, "usuario", None)
+            if exist:
+                for attr, value in usuario.items():
+                    setattr(instance.user, attr, value)
+                instance.user.save()
+            else:
+                user = UserCustomize.objects.create(**usuario)
+                instance.user = user
+                instance.save()
+                
         return instance
         
     def get_lugar_nacimiento_name(self, obj):
@@ -65,7 +84,7 @@ class EstudianteSerializerView(serializers.ModelSerializer):
     
     class Meta:
         model = Estudiante
-        fields = ["id", "curp", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "user", "fecha_actualizacion", "fecha_creacion", "email", "perfil", "municipio"]
+        fields = ["id", "curp", "rfc", "especialidad", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "user", "fecha_actualizacion", "fecha_creacion", "email", "perfil", "municipio"]
     
     def get_lugar_nacimiento(self, obj):
         return obj.lugar_nacimiento.name if obj.lugar_nacimiento else None
@@ -80,7 +99,7 @@ class EstudianteEditSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Estudiante
-        fields = ["id", "curp", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "user", "fecha_actualizacion", "fecha_creacion", "email", "perfil", "municipio"]
+        fields = ["id", "rfc", "especialidad", "curp", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "user", "fecha_actualizacion", "fecha_creacion", "email", "perfil", "municipio"]
     
     def get_lugar_nacimiento(self, obj):
         return {"id": obj.lugar_nacimiento.id, "nombre": obj.lugar_nacimiento.name} if obj.lugar_nacimiento else None
