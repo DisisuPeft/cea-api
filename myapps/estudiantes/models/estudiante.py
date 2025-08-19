@@ -8,7 +8,7 @@ class Estudiante(models.Model):
     perfil = models.OneToOneField(Profile, on_delete=models.CASCADE, null=True, blank=True, related_name="estudiante")
     curp = models.CharField(max_length=18, unique=True, null=True, blank=True)
     rfc = models.CharField(max_length=13, unique=True, null=True, blank=True)
-    especialidad = models.CharField(max_length=100, on_delete=models.SET_NULL, null=True, blank=True)
+    especialidad = models.CharField(max_length=100, null=True, blank=True)
     matricula = models.CharField(max_length=20, unique=True)
     grupo = models.ForeignKey(Grupos, on_delete=models.SET_NULL, null=True, blank=True)
     lugar_nacimiento = models.ForeignKey(EstadosRepublica, related_name="estudiante", on_delete=models.SET_NULL, blank=True, null=True)
