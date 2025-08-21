@@ -108,7 +108,7 @@ class CuntCursos(APIView):
     authentication_classes = [CustomJWTAuthentication]
     
     def get(self, request):
-        estudiante_user = request.user.id
+        estudiante_user = request.user.estudiante.id
         
         programas_count = ProgramaEducativo.objects.filter(inscripcion=estudiante_user).count()
         

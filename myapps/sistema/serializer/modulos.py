@@ -37,7 +37,7 @@ class PlataformaModuloSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', "module", "tabmodule", "user"]
         
     def create(self, validated_data):
-        tabs = validated_data.get("tabmodule") or []
+        tabsmodule = validated_data.get("tabmodule") or []
         user = validated_data.get("user", None)
         module = validated_data.get("module", None)
         
@@ -45,13 +45,13 @@ class PlataformaModuloSerializer(serializers.ModelSerializer):
         if not modulo:
             raise serializers.ValidationError("module not found")
             
-        modulo.usuario.set([user])
+        modulo.usuario.add(user)
         
-        tabs = TabsModulo.objects.filter(modulo__id=modulo.id)
+        tabs = TabsModulo.objects.filter(modulo__id=modulo.id).filter(id__in=tabsmodule)
         
-              
+        # print(tabs)      
         for tab in tabs:
-            tab.user.set([user])
+            tab.user.add(user)
         
         # print(modulo, tabs)
         return modulo

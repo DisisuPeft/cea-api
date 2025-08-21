@@ -26,7 +26,7 @@ class EstudianteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         perfil_data = validated_data.pop('perfil', None)
         user_data   = validated_data.pop('user', None)
-        print(user_data)
+        # print(user_data)
         try:
             with transaction.atomic():
                 user = None
@@ -42,7 +42,7 @@ class EstudianteSerializer(serializers.ModelSerializer):
                 if perfil_data:
                 # Si tu Profile tiene FK/OneToOne a User y lo quieres amarrar:
                 # perfil_data = { **perfil_data, "user": user }  # si el campo existe
-                    profile = Profile.objects.create(**perfil_data)
+                    profile = Profile.objects.create(**perfil_data, user=user)
 
                 estudiante = Estudiante.objects.create(
                     **validated_data,
