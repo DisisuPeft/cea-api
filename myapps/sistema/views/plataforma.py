@@ -30,6 +30,8 @@ from myapps.sistema.pagination import UsersPagination
 from myapps.estudiantes.serializer import EstudianteSerializer
 from django.db.models import Q
 from myapps.sistema.helpers import normalize_q, tokenize
+from myapps.sistema.serializer import PlataformaModuloSerializer
+from myapps.sistema.models import Modulos, TabsModulo
 # Create your views here.
 
 class ManageUsersview(APIView):
@@ -67,16 +69,33 @@ class ManageUsersview(APIView):
     def post(self, request):
         if not request.data:
             return Response("The request is empty", status=status.HTTP_400_BAD_REQUEST)
-        
+        # for i in request.data:
+        #     print(request.data[i])
+            
         estudiante = EstudianteSerializer(data=request.data)
         
         if estudiante.is_valid():
+            estudiante.save()
             return Response("Usuario creado con exito", status=status.HTTP_201_CREATED)
         else:
             return Response(estudiante.errors, status=status.HTTP_400_BAD_REQUEST)    
         
-        
-   
+
+class ManageUserAccessView(APIView):     
+    permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]
+    
+    
+    def post(self, request):
+        if not request.data: 
+            return Response("The request is empty", status=status.HTTP_400_BAD_REQUEST)
+        s = PlataformaModuloSerializer(data=request.data)
+        # print(s.is_valid)
+        if s.is_valid():
+            s.save()
+            return Response("Accesos creadoss", status=status.HTTP_201_CREATED)
+        else:
+            return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 # class UpdateUsersView(APIView):
 #     permission_classes = [IsAuthenticated]
 #     authentication_classes = [CustomJWTAuthentication]  

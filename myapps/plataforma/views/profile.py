@@ -19,7 +19,8 @@ class StudentUpdateProfile(APIView):
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
     def get(self, request, id):
-        # print(id)
+        # user = request.user
+        
         estudiante = Estudiante.objects.filter(user__id=id).first()
         # print(estudiante)
         if not estudiante:

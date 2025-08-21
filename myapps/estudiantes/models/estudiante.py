@@ -9,7 +9,7 @@ class Estudiante(models.Model):
     curp = models.CharField(max_length=18, unique=True, null=True, blank=True)
     rfc = models.CharField(max_length=13, unique=True, null=True, blank=True)
     especialidad = models.CharField(max_length=100, null=True, blank=True)
-    matricula = models.CharField(max_length=20, unique=True)
+    matricula = models.CharField(max_length=20, unique=True, null=True, blank=True)
     grupo = models.ForeignKey(Grupos, on_delete=models.SET_NULL, null=True, blank=True)
     lugar_nacimiento = models.ForeignKey(EstadosRepublica, related_name="estudiante", on_delete=models.SET_NULL, blank=True, null=True)
     municipio = models.ForeignKey(Municipios, related_name="estudiante", on_delete=models.SET_NULL, blank=True, null=True)

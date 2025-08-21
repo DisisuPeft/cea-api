@@ -60,7 +60,6 @@ class TabsView(APIView):
     authentication_classes = [CustomJWTAuthentication]  
     
     def get(self, request, id):
-        # print(id)
         user = request.user
         permissions = user.permission.all()
         # print(permissions)

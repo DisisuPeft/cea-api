@@ -16,10 +16,46 @@ class ModulosSerializer(serializers.ModelSerializer):
         model = Modulos
         fields = ["id", "name", "icon","bgColor", "textColor", "route"]
         
+
+        
+        
+        
+        
+        
 class PlataformaModuloSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=False)
+    module = serializers.IntegerField(required=False)
+    user = serializers.IntegerField(required=False)
+    tabmodule = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=True,
+        required=False
+    )
+    
     class Meta:
         model = Modulos
-        fields = ['id', 'name']
+        fields = ['id', 'name', "module", "tabmodule", "user"]
+        
+    def create(self, validated_data):
+        tabs = validated_data.get("tabmodule") or []
+        user = validated_data.get("user", None)
+        module = validated_data.get("module", None)
+        
+        modulo = Modulos.objects.get(id=module)
+        if not modulo:
+            raise serializers.ValidationError("module not found")
+            
+        modulo.usuario.set([user])
+        
+        tabs = TabsModulo.objects.filter(modulo__id=modulo.id)
+        
+              
+        for tab in tabs:
+            tab.user.set([user])
+        
+        # print(modulo, tabs)
+        return modulo
+        
         
 class PestaniaPlataformaSerializer(serializers.ModelSerializer):
     # modulo = ModulosSerializer(required=False)
@@ -28,7 +64,8 @@ class PestaniaPlataformaSerializer(serializers.ModelSerializer):
     class Meta:
         model = TabsModulo
         fields = ["id", "name", "href", "icon"]
-        
+
+    
 class TabsModuloSerializer(serializers.ModelSerializer):
     modulo = ModulosSerializer(required=False)
     permiso = PermissionCustomizeSerializer(many=True, required=False)

@@ -4,12 +4,13 @@ from myapps.perfil.models.user_profile import User as Profile
 from rest_framework.exceptions import ValidationError
 from myapps.perfil.serializer import ProfileSerializer, ProfileEditSerializer
 from myapps.authentication.models import UserCustomize
-
+from myapps.authentication.serializers import UserCustomizeSerializer
+from django.db import transaction, IntegrityError
 
 class UserEstudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCustomize
-        fields = ["id", "email"]
+        fields = ["id", "email", "password", "roleID"]
 
 
 class EstudianteSerializer(serializers.ModelSerializer):
@@ -23,20 +24,36 @@ class EstudianteSerializer(serializers.ModelSerializer):
         fields = ["id", "curp", "rfc", "especialidad", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "email", "perfil", "municipio", "user"]
     
     def create(self, validated_data):
-        profile_id = validated_data.pop('perfil')
-        user_id = validated_data.pop('user')
-        # print(validated_data)
-        estudiante = Estudiante.objects.create(**validated_data)
-        if not estudiante:
-            raise ValidationError("Estudiante no creado")
-        
-        if user_id:
-            estudiante.user = user_id
-        
-        estudiante.perfil = profile_id #instancia
-        
-        estudiante.save()
-        return estudiante
+        perfil_data = validated_data.pop('perfil', None)
+        user_data   = validated_data.pop('user', None)
+        print(user_data)
+        try:
+            with transaction.atomic():
+                user = None
+                if user_data:
+                    user = UserCustomize.objects.create_user(
+                        email=user_data['email'],
+                        password=user_data['password'],
+                    )
+                    roles = user_data.get("roleID") or []
+                    user.roleID.set(roles)
+
+                profile = None
+                if perfil_data:
+                # Si tu Profile tiene FK/OneToOne a User y lo quieres amarrar:
+                # perfil_data = { **perfil_data, "user": user }  # si el campo existe
+                    profile = Profile.objects.create(**perfil_data)
+
+                estudiante = Estudiante.objects.create(
+                    **validated_data,
+                    user=user,
+                    perfil=profile,
+                )
+
+            return estudiante
+
+        except IntegrityError as e:
+            raise serializers.ValidationError({"user": "Email ya registrado"}) from e
     
     def update(self, instance, validated_data):
         perfil = validated_data.pop('perfil')
