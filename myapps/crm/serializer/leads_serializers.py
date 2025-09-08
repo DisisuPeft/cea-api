@@ -94,9 +94,10 @@ class LeadRecentSerializer(serializers.ModelSerializer):
     etapa = serializers.SerializerMethodField()
     estatus = serializers.SerializerMethodField()
     vendedor_asignado = serializers.SerializerMethodField()
+    tiempo_primera_respuesta = serializers.SerializerMethodField()
     class Meta:
         model = Lead
-        fields = ["id", "nombre", "interesado_en", "etapa", "estatus", "vendedor_asignado"]
+        fields = ["id", "nombre", "interesado_en", "etapa", "estatus", "vendedor_asignado", "tiempo_primera_respuesta"]
         
     def get_interesado_en(self, obj):
         return obj.interesado_en.nombre if obj.interesado_en else None    
@@ -110,6 +111,24 @@ class LeadRecentSerializer(serializers.ModelSerializer):
         # print(obj.vendedor_asignado)
         return f"{obj.vendedor_asignado.profile.nombre} {obj.vendedor_asignado.profile.apellidoP} {obj.vendedor_asignado.profile.apellidoM or ''}" if obj.vendedor_asignado else None
     
+    def get_tiempo_primera_respuesta(self, obj):
+        duration = obj.tiempo_primera_respuesta
+        total_seconds = int(duration.total_seconds())
+        seconds = abs(int(total_seconds))
+        
+        # operations
+        
+        days = seconds // 86400
+        horas = (seconds % 86400) // 3600
+        minutes = (seconds % 3600) // 60
+        segundos = seconds % 60
+        
+        if days >= 1:
+            format_date = f"{days} día(s), {horas:02}:{minutes:02}:{segundos:02}"
+        if days == 0:
+            format_date = f"{horas:02}:{minutes:02}:{segundos:02}"
+            
+        return format_date if obj.tiempo_primera_respuesta else None
         
 class LeadCreateLandingSerializer(serializers.ModelSerializer):
     class Meta:

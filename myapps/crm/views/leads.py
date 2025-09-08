@@ -40,18 +40,40 @@ class RecentLeadsView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
+        user = request.user
         unidad = request.GET.get("unidad")
-        queryset = Lead.objects.filter(Q(institucion__id=unidad)&Q(vendedor_asignado__isnull=True)).select_related(
-            'fuente', 'etapa', 'estatus', 'interesado_en', 'vendedor_asignado'
-        ).order_by("-fecha_creacion")
+        admin = user.roleID.filter(name="Administrador").first()
+        salesman = user.roleID.filter(name="Vendedor").first()
+        
+        if admin:
+            queryset = Lead.objects.filter(Q(institucion__id=unidad)).select_related(
+                'fuente', 'etapa', 'estatus', 'interesado_en', 'vendedor_asignado'
+            ).order_by("-fecha_creacion")
+            
+        if salesman:
+            queryset = Lead.objects.filter(Q(institucion__id=unidad)&Q(vendedor_asignado__isnull=True)).select_related(
+                'fuente', 'etapa', 'estatus', 'interesado_en', 'vendedor_asignado'
+            ).order_by("-fecha_creacion")
+            
+        self.calculate_time_response(queryset=queryset)
         
         if not queryset:
             return Response("No query found", status=status.HTTP_404_NOT_FOUND)
         
         serializer = LeadRecentSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def calculate_time_response(self, queryset):
+        for i in queryset:
+            if i.etapa.nombre == "Interesado":
+                now = timezone.now()
+                date_estimated =  now - i.fecha_creacion
+                i.tiempo_primera_respuesta = date_estimated
+                i.save()
 
+
+            
 class EstadisticsLeadsView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
     authentication_classes = [CustomJWTAuthentication]
@@ -83,7 +105,6 @@ class LeadsView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         unidad = request.GET.get("unidad")
-        # print(user.roleID.filter(name="Administrador").first())
         admin = user.roleID.filter(name="Administrador").first()
         salesman = user.roleID.filter(name="Vendedor").first()
         

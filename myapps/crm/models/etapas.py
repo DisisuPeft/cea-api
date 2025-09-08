@@ -11,7 +11,7 @@ class Etapas(models.Model):
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
     
     def __str__(self):
-        return f"{self.orden} - {self.nombre}"
+        return f"{self.nombre}"
 
     class Meta:
         ordering = ['orden']
