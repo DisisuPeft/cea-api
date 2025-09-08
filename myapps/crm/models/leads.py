@@ -30,3 +30,4 @@ class Lead(models.Model):
     
     
 # Anadir tabla mas adelante para trazar el moviento de los leads
+

@@ -13,7 +13,26 @@ from .campania_serializers import CampaniaProgramaSerializer
 from .notas_serializers import NotasSerializer
 from rest_framework.exceptions import ValidationError
 from myapps.authentication.models import UserCustomize
+from django.db import transaction
+from myapps.sistema.models import Empresa
 # from myapps.sistema.serializer import
+
+class LeadsFormSerializar(serializers.ModelSerializer):
+    notas = serializers.SerializerMethodField(required=False)
+    class Meta:
+        model = Lead
+        fields = "__all__"
+        
+    def create(self, validated_data):
+        try:
+            with transaction.atomic():
+                empresa = Empresa.objects.get(id=1)
+                validated_data["empresa_id"] = empresa.id
+                lead = Lead.objects.create(**validated_data)
+                return lead
+        except Exception as e:
+            raise ValueError(e)
+
 
 class LeadsSerializer(serializers.ModelSerializer):
     fuente = serializers.SerializerMethodField()
@@ -38,6 +57,7 @@ class LeadsSerializer(serializers.ModelSerializer):
             "etapa",
             "etapa_id",
             "estatus",
+            "estatus_id",
             "vendedor_asignado",
             "pipeline",
             "campania",

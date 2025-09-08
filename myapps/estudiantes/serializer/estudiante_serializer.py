@@ -89,7 +89,7 @@ class EstudianteSerializer(serializers.ModelSerializer):
         return instance
         
     def get_lugar_nacimiento_name(self, obj):
-        return obj.lugar_nacimiento.name if obj.lugar_nacimiento else None
+        return {"id": obj.lugar_nacimiento.id, "name": obj.lugar_nacimiento.name} if obj.lugar_nacimiento else None
     
     # def get_municipio_name(self, obj):
     #     return obj.municipio.name if obj.municipio else None

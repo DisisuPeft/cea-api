@@ -1,2 +1,2 @@
-from .modulos import Modulosview, TabsView, PestaniaEstudianteView
-from .plataforma import ManageUsersview, ManageUserAccessView
+from .modulos import Modulosview, TabsView, PestaniaEstudianteView, AssignTabsView
+from .plataforma import ManageUsersview, ManageUserAccessView, ManageEditUserView

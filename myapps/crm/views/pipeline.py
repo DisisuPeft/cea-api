@@ -26,9 +26,9 @@ class PipelineAllView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     
     def get(self, request):
-        
-        pipeline = Pipline.objects.all().prefetch_related('etapas')
-        # print(pipeline)
+        unidad = request.GET.get("unidad")
+        pipeline = Pipline.objects.filter(unidad_academica__id=unidad).prefetch_related('etapas')
+  
         if not pipeline:
             return Response("No query found", status=status.HTTP_404_NOT_FOUND)
         

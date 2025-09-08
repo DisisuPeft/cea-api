@@ -81,6 +81,26 @@ class ManageUsersview(APIView):
             return Response(estudiante.errors, status=status.HTTP_400_BAD_REQUEST)    
         
 
+class ManageEditUserView(APIView):
+    permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]
+    
+    def get(self, request, id):
+        
+        if not id or request.data:
+            return Response("id or request empty", status=status.HTTP_400_BAD_REQUEST)
+        
+        estudiante = Estudiante.objects.get(id=id)
+        
+        if not estudiante:
+            return Response("Estudiante not found", status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = EstudianteSerializer(estudiante)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 class ManageUserAccessView(APIView):     
     permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
     authentication_classes = [CustomJWTAuthentication]
@@ -89,6 +109,10 @@ class ManageUserAccessView(APIView):
     def post(self, request):
         if not request.data: 
             return Response("The request is empty", status=status.HTTP_400_BAD_REQUEST)
+        
+        if not request.data["tabmodule"]:
+            return Response("No se ha seleccionado un submodulo", status=status.HTTP_400_BAD_REQUEST)
+
         s = PlataformaModuloSerializer(data=request.data)
         # print(s.is_valid)
         if s.is_valid():

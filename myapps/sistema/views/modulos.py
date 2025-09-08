@@ -56,29 +56,20 @@ class Modulosview(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
    
 class TabsView(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
     authentication_classes = [CustomJWTAuthentication]  
     
-    def get(self, request, id):
+    def get(self, request):
         user = request.user
-        if not id:
-            return Response("No id provided", status=status.HTTP_400_BAD_REQUEST)
-        permissions = user.permission.all()
         # print(permissions)
         # permisos = Permissions.objects.filter(permiso__in=user.permission.all()).distinct()
-        tabs_user = TabsModulo.objects.filter(user=user.id).filter(modulo=id).distinct().order_by('orden')
-        tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=id).distinct().order_by('orden')
+        tabs = TabsModulo.objects.filter(user=user.id).filter(modulo__id=6).distinct().order_by('orden')
+        # tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=id).distinct().order_by('orden')
         
         # print(tabs_user, tabs_permiso)
-        if tabs_user.exists() and tabs_permiso.exists():
-            tabs = (tabs_user | tabs_permiso).distinct()
-        elif tabs_user.exists():
-            tabs = tabs_user
-        else:
-            tabs = tabs_permiso
-
-        if not tabs:
+        if not tabs.exists():
             return Response("Error al obtener al obtener los submenus, verifica con el administrador", status=status.HTTP_404_NOT_FOUND)
+
         serializer = TabsModuloSerializer(tabs, many=True)
         # print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -113,7 +104,22 @@ class PestaniaEstudianteView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class AssignTabsView(APIView):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
+    authentication_classes = [CustomJWTAuthentication] 
+    
+    def get(self, request, id):
+        if not id:
+            return Response("Not id provided", status=status.HTTP_400_BAD_REQUEST)
         
+        tabs = TabsModulo.objects.filter(modulo__id=id)
+        
+        if not tabs:
+            return Response("Submodules not found", status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = PestaniaPlataformaSerializer(tabs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+            
 #         order_field = request.GET.get('sort_by', 'name')  # Valor por defecto 'name'
 # if order_field.startswith('-'):
 #     # Si es descendente
