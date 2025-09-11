@@ -12,7 +12,8 @@ urlpatterns = [
     path("tabs/all/", TabsView.as_view(), name="get"),
     path("plataforma/pestanias/", PestaniaEstudianteView.as_view(), name="get"),
 
-    # Manage users
+    # Manage users plataforma
+    path("plataforma/users/update/", ManageEditUserView.as_view(), name="patch"),
     path("plataforma/retrieve-users/", ManageUsersview.as_view(), name="get"),
     path("plataforma/users/create/", ManageUsersview.as_view(), name="post"),
     path("plataform/edit-users/<int:id>/", ManageEditUserView.as_view(), name="get"),

@@ -98,7 +98,23 @@ class ManageEditUserView(APIView):
         serializer = EstudianteSerializer(estudiante)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
+    def patch(self, request):
+        id = request.GET.get("id")
+        # rq = request.data
+        
+        estudiante = Estudiante.objects.filter(id=id).first()
+        
+        if not estudiante:
+            return Response("No existe el id en la base de datos", status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = EstudianteSerializer(estudiante, request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response("Usuario editado con exito", status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ManageUserAccessView(APIView):     

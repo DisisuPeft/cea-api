@@ -139,15 +139,15 @@ DATABASES = {
         "PORT": "3306",
     }
 }
+DATABASES = {
+    'default': dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=not DEBUG  # en Render/producción suele convenir True
+    )
+}
 # DATABASES = {
 #     'default': dj_database_url.config(
-#         conn_max_age=600,
-#         ssl_require=not DEBUG  # en Render/producción suele convenir True
-#     )
-# }
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default='postgresql://cea_db_ftqe_user:7xmStSxmmfRh5rwVWRa9iF9IKi8IBkn2@dpg-d2d65bjuibrs7399nasg-a/cea_db_ftqe',
+#         default='postgresql://postgres:sYOgaFtlLchAPGiipdhEYxKFDolRBFul@postgres.railway.internal:5432/railway',
 #         conn_max_age=600,
 #     )
 # }

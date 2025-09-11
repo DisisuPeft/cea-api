@@ -53,41 +53,48 @@ class EstudianteSerializer(serializers.ModelSerializer):
             return estudiante
 
         except IntegrityError as e:
-            raise serializers.ValidationError({"user": "Email ya registrado"}) from e
+            raise serializers.ValidationError(e)
     
     def update(self, instance, validated_data):
-        perfil = validated_data.pop('perfil')
-        usuario = validated_data.pop("user")
+        try:
+            with transaction.atomic():
+                    perfil = validated_data.pop('perfil')
+                    usuario = validated_data.pop("user")
+                    
+                    for attr, value in validated_data.items():
+                        setattr(instance, attr, value)
+                    
+                    instance.save()
+                    
+                    if perfil:
+                        existe = getattr(instance, "perfil", None)
+                        if existe:
+                            for attr, value in perfil.items():
+                                setattr(instance.perfil, attr, value)
+                            instance.perfil.save()
+                        else:
+                            profile = Profile.objects.create(**perfil)
+                            instance.perfil = profile
+                            instance.save()
+                            
+                    if usuario:
+                        roles = usuario.pop("roleID", None)
+                        user_obj = getattr(instance, "user", None)
+                        if user_obj:
+                            for attr, value in usuario.items():
+                                setattr(user_obj, attr, value)
+                            user_obj.save()
+                        else:
+                            user_obj = UserCustomize.objects.create(**usuario)
+                            instance.user = user_obj
+                            instance.save()
+                        
+                        if roles is not None:
+                            user_obj.roleID.set(roles)
         
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        
-        instance.save()
-        
-        if perfil:
-            existe = getattr(instance, "perfil", None)
-            if existe:
-                for attr, value in perfil.items():
-                    setattr(instance.perfil, attr, value)
-                instance.perfil.save()
-            else:
-                profile = Profile.objects.create(**perfil)
-                instance.perfil = profile
-                instance.save()
-                
-        if usuario:
-            exist = getattr(instance, "usuario", None)
-            if exist:
-                for attr, value in usuario.items():
-                    setattr(instance.user, attr, value)
-                instance.user.save()
-            else:
-                user = UserCustomize.objects.create(**usuario)
-                instance.user = user
-                instance.save()
-                
-        return instance
-        
+        except IntegrityError as e:
+            raise serializers.ValidationError(e)    
+    
     def get_lugar_nacimiento_name(self, obj):
         return {"id": obj.lugar_nacimiento.id, "name": obj.lugar_nacimiento.name} if obj.lugar_nacimiento else None
     
