@@ -47,11 +47,10 @@ SECRET_KEY = getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+# ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
-# DEBUG = 'RENDER' not in os.environ  # DEBUG=False en Render
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "https://cea-api-production.up.railway.app/"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "https://cea-api-production.up.railway.app"]
 # RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 # if RENDER_EXTERNAL_HOSTNAME:
 #     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
