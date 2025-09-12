@@ -37,18 +37,18 @@ class Modulosview(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         # print(user)
-        roles = user.roleID.all()
+        # roles = user.roleID.all()
         
-        modulos_user = Modulos.objects.filter(usuario=user.id).distinct().order_by('orden')
-        modulos_rol = Modulos.objects.filter(role__in=roles).distinct().order_by('orden')
+        modulos = Modulos.objects.filter(usuario=user.id).distinct().order_by('orden')
+        # modulos_rol = Modulos.objects.filter(role__in=roles).distinct().order_by('orden')
         
         # modulos = (modulos_user | modulos_rol).distinct()
-        if modulos_user.exists() and modulos_rol.exists():
-            modulos = (modulos_user | modulos_rol).distinct()
-        elif modulos_user.exists():
-             modulos = modulos_user
-        else:
-            modulos = modulos_rol
+        # if modulos_user.exists() and modulos_rol.exists():
+        #     modulos = (modulos_user | modulos_rol).distinct()
+        # elif modulos_user.exists():
+        #      modulos = modulos_user
+        # else:
+        #     modulos = modulos_rol
             
         if not modulos:
             return Response("menu not found", status=status.HTTP_404_NOT_FOUND)
@@ -83,7 +83,7 @@ class PestaniaEstudianteView(APIView):
         user = request.user
         # permissions = user.permission.all()
         
-        modulo = Modulos.objects.filter(usuario=user.id).filter(name="Alumnos").first()
+        modulo = Modulos.objects.filter(usuario=user.id).first()
         # print(modulo)
         
         tabs = TabsModulo.objects.filter(user=user.id).filter(modulo=modulo.id).distinct().order_by('orden')
