@@ -1,6 +1,6 @@
 from django.urls import path, re_path
 from .views.modulos import Modulosview, TabsView, PestaniaEstudianteView, AssignTabsView
-from .views import ManageUsersview, ManageUserAccessView, ManageEditUserView
+from .views import ManageUsersview, ManageUserAccessView, ManageEditUserView, ManageDiplomadosview, ManageUploadMaterialDiplomadosview
 
 urlpatterns = [
     # re_path(
@@ -12,6 +12,11 @@ urlpatterns = [
     path("tabs/all/", TabsView.as_view(), name="get"),
     path("plataforma/pestanias/", PestaniaEstudianteView.as_view(), name="get"),
 
+
+    # Manage programs
+    path("plataforma/programas/all/", ManageDiplomadosview.as_view(), name="get"),
+    path("plataforma/diplomados/documentos/", ManageUploadMaterialDiplomadosview.as_view(), name="get"),
+    path("plataforma/diplomados/upload/material/", ManageUploadMaterialDiplomadosview.as_view(), name="post"),
     # Manage users plataforma
     path("plataforma/users/update/", ManageEditUserView.as_view(), name="patch"),
     path("plataforma/retrieve-users/", ManageUsersview.as_view(), name="get"),

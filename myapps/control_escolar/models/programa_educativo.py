@@ -158,3 +158,16 @@ class SubModulo(models.Model):
     path_class = models.CharField(null=True, blank=True, max_length=100)
     fecha_creacion = models.DateTimeField(auto_now_add=True, null=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
+    
+class TypeFile(models.Model):
+    nombre = models.CharField(max_length=50)
+    fecha_creacion = models.DateTimeField(auto_now_add=True, null=True)
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)
+    
+class MaterialModulos(models.Model):
+    file = models.FileField(upload_to="materiales/")
+    modulo = models.ForeignKey(ModuloEducativo, on_delete=models.CASCADE, related_name="materiales", null=True, blank=True)
+    submodulo = models.ForeignKey(SubModulo, on_delete=models.CASCADE, related_name="materiales", null=True, blank=True)
+    type = models.ForeignKey(TypeFile, on_delete=models.CASCADE, related_name="material", null=True, blank=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True, null=True)
+    fecha_actualizacion = models.DateTimeField(null=True, blank=True)

@@ -32,6 +32,13 @@ from django.db.models import Q
 from myapps.sistema.helpers import normalize_q, tokenize
 from myapps.sistema.serializer import PlataformaModuloSerializer
 from myapps.sistema.models import Modulos, TabsModulo
+from myapps.control_escolar.models import ProgramaEducativo
+from myapps.control_escolar.serializer import ProgramaShowSerializer
+from myapps.control_escolar.pagination import ProgramaPagination
+from myapps.control_escolar.models import MaterialModulos, TypeFile
+from myapps.sistema.serializer import TypeDocumentSerializer, UploadFilesSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
+# from myapps.
 # Create your views here.
 
 class ManageUsersview(APIView):
@@ -50,7 +57,7 @@ class ManageUsersview(APIView):
             q = ""
                 
         queryset = (
-            Estudiante.objects.exclude(user=user).select_related("user", "perfil", "lugar_nacimiento", "municipio").order_by("perfil__nombre", "id")
+            Estudiante.objects.exclude(perfil__user_id=user.id).select_related("perfil", "lugar_nacimiento", "municipio").order_by("perfil__nombre", "id")
         )
 
         if q:
@@ -71,7 +78,7 @@ class ManageUsersview(APIView):
             return Response("The request is empty", status=status.HTTP_400_BAD_REQUEST)
         # for i in request.data:
         #     print(request.data[i])
-            
+        # print(request.data)
         estudiante = EstudianteSerializer(data=request.data)
         
         if estudiante.is_valid():
@@ -101,20 +108,26 @@ class ManageEditUserView(APIView):
     
     def patch(self, request):
         id = request.GET.get("id")
-        # rq = request.data
+        perfil = request.data.pop('perfil')
+        # Normalizar datos
+        for data in request.data:
+            if data and request.data[data]:
+                print(f"{data}: {request.data[data]}")
         
         estudiante = Estudiante.objects.filter(id=id).first()
+        # print(estudiante)
+        # if not estudiante:
+        #     return Response("No existe el id en la base de datos", status=status.HTTP_400_BAD_REQUEST)
         
-        if not estudiante:
-            return Response("No existe el id en la base de datos", status=status.HTTP_400_BAD_REQUEST)
+        # serializer = EstudianteSerializer(estudiante, request.data, partial=True)
         
-        serializer = EstudianteSerializer(estudiante, request.data, partial=True)
+        # if serializer.is_valid():
+        #     serializer.save()
+        return Response("Ok", status=status.HTTP_200_OK)
+        # else:
+        # # HTTP_400_BAD_REQUEST
+        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        if serializer.is_valid():
-            serializer.save()
-            return Response("Usuario editado con exito", status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ManageUserAccessView(APIView):     
@@ -155,7 +168,81 @@ class ManageUserAccessView(APIView):
 
 
 
+class ManageDiplomadosview(APIView):
+    permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]
+    
+    def get(self, request, *args, **kwargs):
+        
+        # user = request.user
+        
+        q_raw = request.GET.get("q") 
+        
+        q = (q_raw or "").strip()
+        
+        if q.lower() in {"null", "undefined", "none", "nan"}:
+            q = ""
+                
+        queryset = (
+            ProgramaEducativo.objects.filter(activo=1).order_by('-fecha_creacion')
+        )
+
+        if q:
+            queryset = queryset.filter(
+                Q(nombre__icontains=q)
+            )
+        
+  
+        paginator = ProgramaPagination()
+
+        result = paginator.paginate_queryset(queryset=queryset, request=request)
+        serializer = ProgramaShowSerializer(result, many=True)
+        
+        return paginator.get_paginated_response(serializer.data)
 
 
 
-
+class ManageUploadMaterialDiplomadosview(APIView):
+    permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]
+    parser_classes = (MultiPartParser, FormParser)
+    
+    def get(self, request):
+        documents = TypeFile.objects.all()
+        if not documents:
+            return Response("Error al consultar los tipos de documentos", status=status.HTTP_400_BAD_REQUEST)
+        serializer = TypeDocumentSerializer(documents, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        # files = request.FILES.get('files')
+        modulo_id = request.data.get("moduloId")
+        type_id = request.data.get("typeId")
+        
+        files = request.FILES.getlist("files")
+        if not files:
+            return Response("No se adjuntaron archivos", status=status.HTTP_400_BAD_REQUEST)
+        
+        created = []
+        errors = []
+        
+        for f in files:
+            data = {
+                "file": f,
+                "modulo": modulo_id,
+                "type": type_id 
+            }
+            serializer = UploadFilesSerializer(data=data)
+            if serializer.is_valid():
+                instance = serializer.save()
+                created.append({
+                    "id": instance.id,
+                    "file": instance.file.url if instance.file else None
+                })
+            else: errors.append(serializer.errors)
+        
+        if errors:
+            return Response({"created": created, "errors": errors}, status=400)
+        
+        return Response("Archivo subido", status=status.HTTP_201_CREATED)  

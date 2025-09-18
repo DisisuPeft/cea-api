@@ -69,7 +69,7 @@ class CursoPanelView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     def get(self, request, id):
         accion = request.query_params.get("accion", None)
-
+        
         if accion == "modulos":
             return self.get_modulos(id)
 

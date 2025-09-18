@@ -2,7 +2,8 @@ from rest_framework import serializers
 from myapps.estudiantes.models import Estudiante
 from myapps.perfil.models.user_profile import User as Profile
 from rest_framework.exceptions import ValidationError
-from myapps.perfil.serializer import ProfileSerializer, ProfileEditSerializer
+from myapps.perfil.serializer import ProfileSerializer
+from myapps.estudiantes.serializer import ProfileEditSerializer
 
 class EstudianteSerializer(serializers.ModelSerializer):
     # lugar_nacimiento_name = serializers.SerializerMethodField()

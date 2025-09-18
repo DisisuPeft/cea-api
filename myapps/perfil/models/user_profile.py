@@ -13,4 +13,4 @@ class User(models.Model):
     genero = models.ForeignKey(Genero, on_delete=models.CASCADE, null=True)
     nivEdu = models.ForeignKey(NivelEducativo, on_delete=models.CASCADE, null=True)  # Permitir valores nulos
     telefono = models.CharField(max_length=15, null=True)
-    user = models.OneToOneField(UserCustomize, on_delete=models.SET_NULL, related_name='profile', null=True)
+    user = models.OneToOneField(UserCustomize, on_delete=models.SET_NULL, related_name='profile', null=True, blank=True)

@@ -2,99 +2,147 @@ from rest_framework import serializers
 from ..models import Estudiante
 from myapps.perfil.models.user_profile import User as Profile
 from rest_framework.exceptions import ValidationError
-from myapps.perfil.serializer import ProfileSerializer, ProfileEditSerializer
+from myapps.perfil.serializer import ProfileSerializer
 from myapps.authentication.models import UserCustomize
 from myapps.authentication.serializers import UserCustomizeSerializer
 from django.db import transaction, IntegrityError
 
+
 class UserEstudentSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True, validators=[]) 
+    password = serializers.CharField(
+        write_only=True,
+        required=False,
+        error_messages={
+            'blank': "El campo contraseña no puede estar vacío.",
+            'required': "La contraseña es obligatoria."
+        }
+    )
     class Meta:
         model = UserCustomize
         fields = ["id", "email", "password", "roleID"]
+        # extra_kwargs = {
+        #     # Evita que el UniqueValidator automático dispare en nested-update
+        #     "email": {"validators": []},
+        # }
+    
+    # def create(self, validated_data):        
+    #     password = validated_data.pop("password", None)
+    #     user = UserCustomize.objects.create_user(**validated_data, password=password)
+    #     roles = self.initial_data.get("roleID")
+    #     if roles is not None:
+    #         user.roleID.set(roles)
+    #     return user
+    
+    # def update(self, instance, validated_data):
+    #     roles = validated_data.pop('roleID', None)
+    #     password = validated_data.pop("password", None)
+        
+    #     for attr, value in validated_data.items():
+    #         setattr(instance, attr, value)
+        
+    #     if password:
+    #         instance.set_password(password)
+            
+    #     instance.save()
+        
+    #     if roles is not None:
+    #         instance.roleID.set(roles)
+        
+    #     return instance
+            
+    def validate_email(self, value):
+        user = getattr(self, "instance", None)
+        qs = UserCustomize.objects.filter(email=value)
+        if user:
+            qs = qs.exclude(pk=user.id)
+        if qs.exists():
+            raise serializers.ValidationError("user with this email already exists.")
+        return value
 
+class ProfileEditSerializer(serializers.ModelSerializer):
+    user = UserEstudentSerializer(required=False)
+    class Meta:
+        model = Profile
+        fields = ["nombre", "apellidoP", "apellidoM", "edad", "fechaNacimiento", "genero", "nivEdu","telefono", "user"]
 
+    def create(self, validated_data):
+        user_data = validated_data.pop("user")
+        email = user_data['email']
+        password = user_data['password']
+        user = UserCustomize.objects.create_user(email=email, password=password)
+        
+        if not user:
+            raise serializers.ValidationError({'user': "Usuario no creado"})
+        
+        profile = Profile.objects.create(user=user, **validated_data)
+        
+        return profile
+        # profile = Profile.objects.create(**validated_data, user=)        
 class EstudianteSerializer(serializers.ModelSerializer):
     # lugar_nacimiento_name = serializers.SerializerMethodField()
     # municipio_name = serializers.SerializerMethodField()
     # user = serializers.CharField(required=False)
-    perfil = ProfileEditSerializer()
-    user = UserEstudentSerializer()
+    perfil = ProfileEditSerializer(required=False)
     class Meta:
         model = Estudiante
-        fields = ["id", "curp", "rfc", "especialidad", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "email", "perfil", "municipio", "user"]
+        fields = ["id", "curp", "rfc", "especialidad", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "perfil", "municipio"]
     
+    @transaction.atomic
     def create(self, validated_data):
-        perfil_data = validated_data.pop('perfil', None)
-        user_data   = validated_data.pop('user', None)
-        # print(user_data)
-        try:
-            with transaction.atomic():
-                user = None
-                if user_data:
-                    user = UserCustomize.objects.create_user(
-                        email=user_data['email'],
-                        password=user_data['password'],
-                    )
-                    roles = user_data.get("roleID") or []
-                    user.roleID.set(roles)
+        perfil_data = validated_data.pop("perfil", None)
+        # user_data = None
+        if perfil_data:
+            user_data   = perfil_data.pop("user", None)
 
-                profile = None
-                if perfil_data:
-                # Si tu Profile tiene FK/OneToOne a User y lo quieres amarrar:
-                # perfil_data = { **perfil_data, "user": user }  # si el campo existe
-                    profile = Profile.objects.create(**perfil_data, user=user)
+        for k in ("curp", "rfc", "matricula", "email"):
+            if k in validated_data:
+                validated_data[k] = validated_data[k] or None
 
-                estudiante = Estudiante.objects.create(
-                    **validated_data,
-                    user=user,
-                    perfil=profile,
-                )
+        user = None
+        if user_data:
+            roles    = user_data.pop("roleID", [])
+            password = user_data.pop("password", None)
+            email    = (user_data.pop("email", None) or "").strip().lower()
+            if not email:
+                raise serializers.ValidationError({"user": {"email": ["El email es obligatorio."]}})
 
-            return estudiante
+            user = UserCustomize.objects.filter(email=email).first()
+            if user is None:
+                user = UserCustomize.objects.create_user(email=email, password=password)
+            else:
+                for attr, val in user_data.items():
+                    setattr(user, attr, val)
+                if password:
+                    user.set_password(password)
+                user.save()
 
-        except IntegrityError as e:
-            raise serializers.ValidationError(e)
+
+            if roles is not None:
+                user.roleID.set(roles)
+        profile = None
+        if perfil_data:
+            if not user:
+                raise serializers.ValidationError({"perfil": ["Para crear perfil se requiere un usuario."]})
+            profile = Profile.objects.create(user=user, **perfil_data)
+
+        estudiante = Estudiante.objects.create(
+            **validated_data,  
+            perfil=profile,
+        )
+        return estudiante
     
+    @transaction.atomic
     def update(self, instance, validated_data):
-        try:
-            with transaction.atomic():
-                    perfil = validated_data.pop('perfil')
-                    usuario = validated_data.pop("user")
-                    
-                    for attr, value in validated_data.items():
-                        setattr(instance, attr, value)
-                    
-                    instance.save()
-                    
-                    if perfil:
-                        existe = getattr(instance, "perfil", None)
-                        if existe:
-                            for attr, value in perfil.items():
-                                setattr(instance.perfil, attr, value)
-                            instance.perfil.save()
-                        else:
-                            profile = Profile.objects.create(**perfil)
-                            instance.perfil = profile
-                            instance.save()
-                            
-                    if usuario:
-                        roles = usuario.pop("roleID", None)
-                        user_obj = getattr(instance, "user", None)
-                        if user_obj:
-                            for attr, value in usuario.items():
-                                setattr(user_obj, attr, value)
-                            user_obj.save()
-                        else:
-                            user_obj = UserCustomize.objects.create(**usuario)
-                            instance.user = user_obj
-                            instance.save()
-                        
-                        if roles is not None:
-                            user_obj.roleID.set(roles)
+        # 1) Extrae datos anidados tal como en tu create
+        perfil_data = validated_data.pop("perfil", None)
+        user_data = None
+        if perfil_data:
+            user_data = perfil_data.pop("user", None)
+
+
+        return instance
         
-        except IntegrityError as e:
-            raise serializers.ValidationError(e)    
-    
     def get_lugar_nacimiento_name(self, obj):
         return {"id": obj.lugar_nacimiento.id, "name": obj.lugar_nacimiento.name} if obj.lugar_nacimiento else None
     

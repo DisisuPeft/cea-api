@@ -24,5 +24,7 @@ from .programa_educativo import (
     ModuloEducativo,
     CalendarioModulo,
     SubModulo,
+    TypeFile,
+    MaterialModulos
 )
 from .eventos import Evento, TipoEvento

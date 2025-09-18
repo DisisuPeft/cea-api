@@ -1,2 +1,4 @@
 from .modulos import TabsModuloSerializer, ModulosSerializer, PlataformaModuloSerializer, PestaniaPlataformaSerializer
 from .empresa_serializer import EmpresaSerializer, EmpresaSerializerGenerics
+from .manage_cursos import UploadFilesSerializer, TypeDocumentSerializer
+from .manage_users import EstudianteEditSerializer, EstudianteSerializer, EstudianteSerializerView

@@ -3,6 +3,7 @@ from myapps.catalogos.serializer import GeneroSerializer, NivelEducativoSerializ
 from ..models import User
 from myapps.catalogos.models import Genero, NivelEducativo
 from ..models import User
+
 class ProfileSerializer(serializers.ModelSerializer):
     # user = serializers.IntegerField(write_only=True, required=False)
     # genero = GeneroSerializer(required=False)
@@ -56,8 +57,4 @@ class ProfileSerializer(serializers.ModelSerializer):
         return instance
     
     
-class ProfileEditSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["nombre", "apellidoP", "apellidoM", "edad", "fechaNacimiento", "genero", "nivEdu","telefono", "user"]
        

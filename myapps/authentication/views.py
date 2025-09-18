@@ -209,53 +209,50 @@ class CheckUser(APIView):
 
 
 
-# class LogoutView(APIView):
-#     authentication_classes = [CustomJWTAuthentication]
-#     permission_classes = [IsAuthenticated]
-#     def post(self, request, *args, **kwargs):
-#         response = Response(status=status.HTTP_200_OK)
-#         response.delete_cookie(
-#             "access",
-#             path="/",
-#             samesite="None",
-#             secure=True,
-#         )
-#         response.delete_cookie(
-#             "refresh",
-#             path="/",
-#             samesite="None",
-#             secure=True,
-#         )
-#         response.delete_cookie(
-#             "token",
-#             path="/",
-#             samesite="None",
-#             secure=True,
-#         )
-#         return response
 class LogoutView(APIView):
+    authentication_classes = [CustomJWTAuthentication]
     permission_classes = [IsAuthenticated]
-
     def post(self, request, *args, **kwargs):
-        resp = Response({"detail": "logout ok"}, status=status.HTTP_200_OK)
+        response = Response(status=status.HTTP_200_OK)
+        response.delete_cookie(
+            "access",
+            path="/",
+            samesite="None",
+        )
+        response.delete_cookie(
+            "refresh",
+            path="/",
+            samesite="None",
+        )
+        response.delete_cookie(
+            "token",
+            path="/",
+            samesite="None",
+        )
+        return response
+# class LogoutView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-        # Variantes de borrado: sin domain y (si aplica) con domain
-        delete_variants = [
-            dict(path="/", secure=True, samesite="None"),
-        ]
+#     def post(self, request, *args, **kwargs):
+#         resp = Response({"detail": "logout ok"}, status=status.HTTP_200_OK)
 
-        # Si usas un domain explícito en algún lugar (no es tu caso por lo que pegaste),
-        # podrías añadir algo como:
-        # if getattr(settings, "SESSION_COOKIE_DOMAIN", None):
-        #     delete_variants.append(dict(path="/", secure=True, samesite="None",
-        #                                 domain=settings.SESSION_COOKIE_DOMAIN))
+#         # Variantes de borrado: sin domain y (si aplica) con domain
+#         delete_variants = [
+#             dict(path="/", secure=True, samesite="None"),
+#         ]
 
-        cookie_names = ["access", "refresh", "token", "__Host-access", "__Host-refresh"]
+#         # Si usas un domain explícito en algún lugar (no es tu caso por lo que pegaste),
+#         # podrías añadir algo como:
+#         # if getattr(settings, "SESSION_COOKIE_DOMAIN", None):
+#         #     delete_variants.append(dict(path="/", secure=True, samesite="None",
+#         #                                 domain=settings.SESSION_COOKIE_DOMAIN))
 
-        for opts in delete_variants:
-            for name in cookie_names:
-                resp.delete_cookie(name, **opts)
+#         cookie_names = ["access", "refresh", "token", "__Host-access", "__Host-refresh"]
 
-        return resp
+#         for opts in delete_variants:
+#             for name in cookie_names:
+#                 resp.delete_cookie(name, **opts)
+
+#         return resp
 
 # def user(request):

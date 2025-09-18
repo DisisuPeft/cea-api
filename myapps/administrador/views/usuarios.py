@@ -137,8 +137,8 @@ class RolesView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     
     def get(self, request):
-        roles = Roles.objects.exclude("Administrador")
-        
+        roles = Roles.objects.filter(name="Estudiante")
+        # print(roles)        
         if not roles: 
             return Response("Roles not found", status=status.HTTP_400_BAD_REQUEST)  
         serializer = RoleCustomizeSerializer(roles, many=True)
