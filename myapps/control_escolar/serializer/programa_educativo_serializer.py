@@ -124,7 +124,7 @@ class ProgramaShowSerializer(serializers.ModelSerializer):
     def get_modalidad(self, obj):
         return obj.modalidad.name if obj.modalidad else None
     
- 
+    
 class SubModuloViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubModulo

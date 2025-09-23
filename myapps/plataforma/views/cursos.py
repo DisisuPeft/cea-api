@@ -22,14 +22,15 @@ class CursoView(APIView):
     authentication_classes = [CustomJWTAuthentication]
 # Faltaria agregar como medir el avance
     def get(self, request, *args, **kwargs):
-        user = request.user
-        
-        estudiante = Estudiante.objects.filter(user=user.id).first()
+        id = request.user.profile.estudiante.id
+
+        estudiante = Estudiante.objects.filter(id=id).first()
+
         if not estudiante:
             return Response("No existe relacion entre estudiante y usuario, consulta con el administrador", status=status.HTTP_404_NOT_FOUND)
         
         programas = ProgramaEducativo.objects.filter(inscripcion=estudiante.id).order_by('-fecha_creacion')
-        
+
         if not programas:
             return Response("No existen programas educativos", status=status.HTTP_404_NOT_FOUND)
         
@@ -43,9 +44,9 @@ class CursoPaginatedView(APIView):
     authentication_classes = [CustomJWTAuthentication]
 
     def get(self, request, *args, **kwargs):
-        user = request.user
+        id = request.user.profile.estudiante.id
         
-        estudiante = Estudiante.objects.filter(user=user.id).first()
+        estudiante = Estudiante.objects.filter(id=id).first()
         if not estudiante:
             return Response("No existe relacion entre estudiante y usuario, consulta con el administrador", status=status.HTTP_404_NOT_FOUND)
         
@@ -108,7 +109,7 @@ class CuntCursos(APIView):
     authentication_classes = [CustomJWTAuthentication]
     
     def get(self, request):
-        estudiante_user = request.user.estudiante.id
+        estudiante_user = request.user.profile.estudiante.id
         
         programas_count = ProgramaEducativo.objects.filter(inscripcion=estudiante_user).count()
         

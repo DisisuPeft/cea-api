@@ -167,6 +167,7 @@ class TypeFile(models.Model):
 class MaterialModulos(models.Model):
     file = models.FileField(upload_to="materiales/")
     modulo = models.ForeignKey(ModuloEducativo, on_delete=models.CASCADE, related_name="materiales", null=True, blank=True)
+    programa = models.ForeignKey(ProgramaEducativo, on_delete=models.SET_NULL, related_name="materiales", null=True, blank=True)
     submodulo = models.ForeignKey(SubModulo, on_delete=models.CASCADE, related_name="materiales", null=True, blank=True)
     type = models.ForeignKey(TypeFile, on_delete=models.CASCADE, related_name="material", null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True, null=True)

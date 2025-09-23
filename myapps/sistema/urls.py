@@ -1,6 +1,10 @@
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from .views.modulos import Modulosview, TabsView, PestaniaEstudianteView, AssignTabsView
-from .views import ManageUsersview, ManageUserAccessView, ManageEditUserView, ManageDiplomadosview, ManageUploadMaterialDiplomadosview
+from .views import ManageUsersview, ManageUserAccessView, ManageEditUserView, ManageDiplomadosview, ManageUploadMaterialDiplomadosview, MaterialViewSet
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r"materiales", MaterialViewSet, basename="material")
 
 urlpatterns = [
     # re_path(
@@ -12,9 +16,10 @@ urlpatterns = [
     path("tabs/all/", TabsView.as_view(), name="get"),
     path("plataforma/pestanias/", PestaniaEstudianteView.as_view(), name="get"),
 
-
+    path("plataforma/", include(router.urls)),
     # Manage programs
     path("plataforma/programas/all/", ManageDiplomadosview.as_view(), name="get"),
+    path("plataforma/programas/inscription/", ManageDiplomadosview.as_view(), name="post"),
     path("plataforma/diplomados/documentos/", ManageUploadMaterialDiplomadosview.as_view(), name="get"),
     path("plataforma/diplomados/upload/material/", ManageUploadMaterialDiplomadosview.as_view(), name="post"),
     # Manage users plataforma

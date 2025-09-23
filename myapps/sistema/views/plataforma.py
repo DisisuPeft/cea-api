@@ -1,27 +1,7 @@
-from django.shortcuts import render
-from contextvars import Token
-
-from myapps.authentication.manager import CustomUserManager
-from myapps.authentication.models import UserCustomize as User, Permissions
-from django.http import JsonResponse
 from django.utils.decorators import method_decorator  # importante
-from django.shortcuts import render
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from myapps.authentication.serializers import UserCustomizeSerializer
-from rest_framework import generics, status
-from rest_framework.authentication import SessionAuthentication
-from rest_framework_simplejwt.tokens import RefreshToken
-from myapps.perfil.serializer import ProfileSerializer
-# from myapps.perfil.models import Profile
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
-from django.conf import settings
+from rest_framework import status
 from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
@@ -31,13 +11,19 @@ from myapps.estudiantes.serializer import EstudianteSerializer
 from django.db.models import Q
 from myapps.sistema.helpers import normalize_q, tokenize
 from myapps.sistema.serializer import PlataformaModuloSerializer
-from myapps.sistema.models import Modulos, TabsModulo
 from myapps.control_escolar.models import ProgramaEducativo
 from myapps.control_escolar.serializer import ProgramaShowSerializer
 from myapps.control_escolar.pagination import ProgramaPagination
 from myapps.control_escolar.models import MaterialModulos, TypeFile
-from myapps.sistema.serializer import TypeDocumentSerializer, UploadFilesSerializer
+from myapps.sistema.serializer import TypeDocumentSerializer, UploadFilesSerializer, MaterialSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
+from myapps.estudiantes.serializer import UpdateEstudentSerializer
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
+import os, mimetypes
+from django.http import FileResponse, Http404
+from django.conf import settings
+from pathlib import Path
 # from myapps.
 # Create your views here.
 
@@ -76,9 +62,7 @@ class ManageUsersview(APIView):
     def post(self, request):
         if not request.data:
             return Response("The request is empty", status=status.HTTP_400_BAD_REQUEST)
-        # for i in request.data:
-        #     print(request.data[i])
-        # print(request.data)
+
         estudiante = EstudianteSerializer(data=request.data)
         
         if estudiante.is_valid():
@@ -108,25 +92,17 @@ class ManageEditUserView(APIView):
     
     def patch(self, request):
         id = request.GET.get("id")
-        perfil = request.data.pop('perfil')
-        # Normalizar datos
-        for data in request.data:
-            if data and request.data[data]:
-                print(f"{data}: {request.data[data]}")
-        
         estudiante = Estudiante.objects.filter(id=id).first()
-        # print(estudiante)
-        # if not estudiante:
-        #     return Response("No existe el id en la base de datos", status=status.HTTP_400_BAD_REQUEST)
         
-        # serializer = EstudianteSerializer(estudiante, request.data, partial=True)
+        if not estudiante:
+            return Response("El estudiante no existe.", status=status.HTTP_404_NOT_FOUND)
+
         
-        # if serializer.is_valid():
-        #     serializer.save()
-        return Response("Ok", status=status.HTTP_200_OK)
-        # else:
-        # # HTTP_400_BAD_REQUEST
-        #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UpdateEstudentSerializer(instance=estudiante, data=request.data)
+        
+        serializer.is_valid(raise_exception=True)
+        
+        return Response("Estudiante actualizado con exito.", status=status.HTTP_200_OK)
         
 
 
@@ -146,25 +122,9 @@ class ManageUserAccessView(APIView):
         # print(s.is_valid)
         if s.is_valid():
             s.save()
-            return Response("Accesos creadoss", status=status.HTTP_201_CREATED)
+            return Response("Accesos creados", status=status.HTTP_201_CREATED)
         else:
             return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
-# class UpdateUsersView(APIView):
-#     permission_classes = [IsAuthenticated]
-#     authentication_classes = [CustomJWTAuthentication]  
-    
-#     def get(self, request):
-#         rols = request.user.roleID.all()
-#         permisos = Permissions.objects.filter(permission__in=rols).distinct()
-#         tabs = TabsModulo.objects.filter(permiso__in=permisos)
-#         # print(permisos)
-#         if not tabs:
-#             return Response("Error al obtener al obtener los submenus, verifica con el administrador", status=status.HTTP_404_NOT_FOUND)
-#         serializer = TabsModuloSerializer(tabs, many=True)
-#         # print(serializer.data)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 
@@ -199,6 +159,20 @@ class ManageDiplomadosview(APIView):
         serializer = ProgramaShowSerializer(result, many=True)
         
         return paginator.get_paginated_response(serializer.data)
+    # evitar inscribir dos veces a un estudiante
+    def post(self, reuest):
+        diplomado_id = reuest.data.pop('curso_id', None)
+        estudiante_id = reuest.data.pop('estudiante_id', None)
+        
+        diplomado = ProgramaEducativo.objects.filter(id=diplomado_id).first()
+        
+        if diplomado.inscripcion.filter(id=estudiante_id).exists():
+            return Response("No puedes inscribir 2 veces al mismo estudiante", status=status.HTTP_400_BAD_REQUEST)
+        diplomado.inscripcion.add(estudiante_id)
+        
+# diplomado.inscripcion.add(estudiante_id)
+        # print(exists)
+        return Response("Estudiante inscrito", status=status.HTTP_200_OK)
 
 
 
@@ -218,6 +192,7 @@ class ManageUploadMaterialDiplomadosview(APIView):
     def post(self, request):
         # files = request.FILES.get('files')
         modulo_id = request.data.get("moduloId")
+        programa_id = request.data.get("programaId")
         type_id = request.data.get("typeId")
         
         files = request.FILES.getlist("files")
@@ -231,7 +206,8 @@ class ManageUploadMaterialDiplomadosview(APIView):
             data = {
                 "file": f,
                 "modulo": modulo_id,
-                "type": type_id 
+                "type": type_id,
+                "programa": programa_id
             }
             serializer = UploadFilesSerializer(data=data)
             if serializer.is_valid():
@@ -246,3 +222,43 @@ class ManageUploadMaterialDiplomadosview(APIView):
             return Response({"created": created, "errors": errors}, status=400)
         
         return Response("Archivo subido", status=status.HTTP_201_CREATED)  
+
+
+
+    
+class MaterialViewSet(ModelViewSet):
+    queryset = MaterialModulos.objects.all().order_by("-fecha_creacion")
+    serializer_class = MaterialSerializer
+    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]), IsAuthenticated]
+    
+    def get_queryset(self):
+        qs = super().get_queryset()
+        programa_id = self.request.query_params.get("programa_id")
+        
+        if programa_id:
+            if hasattr(MaterialModulos, "programa_id"):
+                qs = qs.filter(programa_id=programa_id)
+        return qs
+    
+    @action(detail=True, methods=["get"], url_path="download", url_name="download")
+    def download(self, request, pk=None):
+        mat = self.get_object()
+        
+        if hasattr(mat.file, "path"):
+            abs_path = Path(mat.file.path)
+        else:
+            abs_path = Path(settings.MEDIA_ROOT) / str(mat.file)
+            
+        if not abs_path.exists():
+            raise Http404("Archivo no encontrado")
+        
+        filename = abs_path.name
+        
+        content_type = mimetypes.guess_type(filename)[0] or "application/octet-stream"
+        
+        return FileResponse(
+            open(abs_path, "rb"),
+            as_attachment=True,
+            filename=filename,
+            content_type=content_type,
+        )

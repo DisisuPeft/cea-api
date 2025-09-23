@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from myapps.estudiantes.serializer import EstudianteSerializer, EstudianteSerializerView, EstudianteEditSerializer
+from myapps.estudiantes.serializer import EstudianteSerializer, EstudianteProfileSerializer, UpdateEstudentSerializer
 from myapps.authentication.decorators import role_required
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.models import UserCustomize
@@ -18,22 +18,23 @@ class StudentUpdateProfile(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
-    def get(self, request, id):
-        # user = request.user
+    def get(self, request):
+        id = request.user.profile.estudiante.id
         
-        estudiante = Estudiante.objects.filter(user__id=id).first()
+        estudiante = Estudiante.objects.filter(id=id).first()
         # print(estudiante)
         if not estudiante:
             return Response("Estudiantes not found", status=status.HTTP_404_NOT_FOUND)
-        serializer = EstudianteSerializer(estudiante)
+        serializer = EstudianteProfileSerializer(estudiante)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    def patch(self, request, id):
+    def patch(self, request):
+        id = request.user.profile.estudiante.id
         # profile = {}
         if request.data and id:
-            estudiante = Estudiante.objects.get(user__id=id)
+            estudiante = Estudiante.objects.get(id=id)
 
-            update_serializer = EstudianteSerializer(estudiante, data=request.data, partial=True)
+            update_serializer = UpdateEstudentSerializer(estudiante, data=request.data, partial=True)
             # print(update_serializer.data)   
             if update_serializer.is_valid():
                 update_serializer.save()
@@ -43,4 +44,4 @@ class StudentUpdateProfile(APIView):
                 return Response(update_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else: 
             # print(estudiante)
-            return Response("server response", status=status.HTTP_200_OK)
+            return Response("No existe una relacion con estudiante", status=status.HTTP_200_OK)

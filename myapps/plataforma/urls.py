@@ -8,6 +8,6 @@ urlpatterns = [
     path("student/cursos/all/", CursoPaginatedView.as_view(), name="get"),
     path("student/total-programs/", CuntCursos.as_view(), name="get"),
     path("student/cursos/<int:id>/", CursoPanelView.as_view()),
-    path("student/profile/<int:id>/", StudentUpdateProfile.as_view(), name="get"),
-    path("student/update/profile/<int:id>/", StudentUpdateProfile.as_view(), name="patch")
+    path("student/profile/", StudentUpdateProfile.as_view(), name="get"),
+    path("student/update/profile/", StudentUpdateProfile.as_view(), name="patch")
 ]

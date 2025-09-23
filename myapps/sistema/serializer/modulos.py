@@ -40,7 +40,7 @@ class PlataformaModuloSerializer(serializers.ModelSerializer):
         tabsmodule = validated_data.get("tabmodule") or []
         user = validated_data.get("user", None)
         module = validated_data.get("module", None)
-        
+        print(user)
         modulo = Modulos.objects.get(id=module)
         if not modulo:
             raise serializers.ValidationError("module not found")
