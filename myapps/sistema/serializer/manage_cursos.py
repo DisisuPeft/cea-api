@@ -7,6 +7,7 @@ from myapps.control_escolar.models import MaterialModulos, TypeFile
 import os, re
 from django.urls import reverse
 from django.db.models.fields.files import FieldFile
+from urllib.parse import urlparse, urlunparse
 
 class UploadFilesSerializer(serializers.Serializer):
     file = serializers.FileField()
@@ -46,6 +47,11 @@ def _display_name_from_path(path: str) -> str:
     name = os.path.basename(path or "")
     # Elimina los prefijos para mostrar a usuarios
     return re.sub(r'^(programa)_\d+_', '', name, flags=re.I)
+def _force_https(url: str) -> str:
+    p = urlparse(url)
+    if p.scheme != "https":
+        p = p._replace(scheme="https")
+    return urlunparse(p)
 
 class MaterialSerializer(serializers.ModelSerializer):
     file = serializers.SerializerMethodField()
@@ -69,12 +75,13 @@ class MaterialSerializer(serializers.ModelSerializer):
         display_name = _display_name_from_path(path)
         
         # URL absoula al endpoint de descarga
-        rq = self.context.get("request")
         download_url = None
+        rq = self.context.get("request")
         if rq:
-            download_url = rq.build_absolute_uri(
+            raw_url = rq.build_absolute_uri(
                 reverse("material-download", args=[obj.id])
             )
+            download_url = _force_https(raw_url)
         return {
             "name": display_name,
             "path": path,
