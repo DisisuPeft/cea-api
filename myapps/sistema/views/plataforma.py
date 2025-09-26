@@ -24,6 +24,8 @@ import os, mimetypes
 from django.http import FileResponse, Http404
 from django.conf import settings
 from pathlib import Path
+from django.http import JsonResponse
+from django.views import View
 # from myapps.
 # Create your views here.
 
@@ -262,3 +264,13 @@ class MaterialViewSet(ModelViewSet):
             filename=filename,
             content_type=content_type,
         )
+        
+
+class DebugProxyView(View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({
+            "scheme": request.scheme,                       # vea “http” o “https”
+            "host": request.get_host(),                     # dominio que Django ve
+            "forwarded_proto": request.META.get("HTTP_X_FORWARDED_PROTO"),
+            "all_headers": {k: v for k, v in request.META.items() if k.startswith("HTTP_")},
+        })

@@ -78,10 +78,10 @@ class MaterialSerializer(serializers.ModelSerializer):
         download_url = None
         rq = self.context.get("request")
         if rq:
-            raw_url = rq.build_absolute_uri(
+            download_url = rq.build_absolute_uri(
                 reverse("material-download", args=[obj.id])
             )
-            download_url = _force_https(raw_url)
+            # download_url = _force_https(raw_url)
         return {
             "name": display_name,
             "path": path,

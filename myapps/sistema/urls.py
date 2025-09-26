@@ -1,6 +1,6 @@
 from django.urls import path, re_path, include
 from .views.modulos import Modulosview, TabsView, PestaniaEstudianteView, AssignTabsView
-from .views import ManageUsersview, ManageUserAccessView, ManageEditUserView, ManageDiplomadosview, ManageUploadMaterialDiplomadosview, MaterialViewSet
+from .views import ManageUsersview, ManageUserAccessView, ManageEditUserView, ManageDiplomadosview, ManageUploadMaterialDiplomadosview, MaterialViewSet, DebugProxyView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -27,9 +27,10 @@ urlpatterns = [
     path("plataforma/retrieve-users/", ManageUsersview.as_view(), name="get"),
     path("plataforma/users/create/", ManageUsersview.as_view(), name="post"),
     path("plataform/edit-users/<int:id>/", ManageEditUserView.as_view(), name="get"),
-    
+    # path("/endpoint/")
     # accesos a tabs y modulos
     path('plataforma/retrive-submodules/<int:id>', AssignTabsView.as_view(), name="get"),
     path("plataforma/add-access/", ManageUserAccessView.as_view(), name="post"),
     path("plataform/edit-users/<int:id>", ManageEditUserView.as_view(), name="get"),
+    path("debug/proxy/", DebugProxyView.as_view(), name="debug-proxy"),
 ]
