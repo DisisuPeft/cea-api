@@ -8,6 +8,7 @@ from myapps.catalogos.models import InstitucionAcademica
 from myapps.control_escolar.models import ProgramaEducativo
 from .campanias import Campania, CampaniaPrograma
 from .pipline import Pipline
+# from myapps.crm.
 # Create your models here.
 
 class Lead(models.Model):
@@ -27,7 +28,12 @@ class Lead(models.Model):
     etapa_anterior = models.ForeignKey(Etapas, on_delete=models.SET_NULL, null=True, blank=True, related_name="leads_previos")
     fecha_creacion = models.DateTimeField(auto_now_add=True, null=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
+    was_in_touch = models.DateField(blank=True, null=True)
     
+    
+    
+    # def was_in_touch_today(self):
+    #     date = 
     
 # Anadir tabla mas adelante para trazar el moviento de los leads
 

@@ -20,13 +20,13 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from myapps.estudiantes.serializer import UpdateEstudentSerializer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
-import os, mimetypes
+import os, mimetypes, logging
 from django.http import FileResponse, Http404
 from django.conf import settings
 from pathlib import Path
 from django.http import JsonResponse
 from django.views import View
-# from myapps.
+
 # Create your views here.
 
 class ManageUsersview(APIView):
