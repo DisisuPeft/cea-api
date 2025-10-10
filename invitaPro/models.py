@@ -11,7 +11,7 @@ class Base(models.Model):
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL,
         related_name="%(app_label)s_%(class)s_modified_by_related"
-    )  
+    )
 
 class TipoProducto(Base):
     name = models.CharField(max_length=50)

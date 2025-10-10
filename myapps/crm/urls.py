@@ -1,7 +1,8 @@
 from django.urls import path, re_path
 from .views import (
     LeadsView, LeadView, CreateLeadFromLanding, RecentLeadsView, EstadisticsLeadsView, PipelineAllView, GetEmpresaView, GetProgramsView, GetUnidadAcademicaView, PipelineUpdateView,
-    GetFuentesView, GetEstatusView, UpdateFuentesView, UpdateEstatusView, GetEtapasPipelineView, GetVendedoresView, CampaniaView, UnidadNegocioView
+    GetFuentesView, GetEstatusView, UpdateFuentesView, UpdateEstatusView, GetEtapasPipelineView, GetVendedoresView, CampaniaView, UnidadNegocioView,
+    SaveRequestView
 )
 
 urlpatterns = [
@@ -30,4 +31,9 @@ urlpatterns = [
     path('crm/campanias/', CampaniaView.as_view(), name="get"),
     path("crm/unidades/", UnidadNegocioView.as_view(), name="get"),
     
+
+
+    # Invita Pro
+    path('crm/ip/request/create/', SaveRequestView.as_view(), name="post")
+
 ]

@@ -3,3 +3,4 @@ from .pipeline import PipelineAllView, GetProgramsView, GetUnidadAcademicaView, 
 from .genericos import GetEstatusView, GetFuentesView, UpdateFuentesView, UpdateEstatusView
 from .campanias import CampaniaView
 from .unidades_negocio import UnidadNegocioView
+from .invita_pro import SaveRequestView

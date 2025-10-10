@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+from myapps.sistema.models import Empresa
 
 class Base(models.Model):
     class Meta:
@@ -11,6 +12,9 @@ class Base(models.Model):
     modified_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL,
         related_name="%(app_label)s_%(class)s_modified_by_related"
+    )
+    empresa = models.ForeignKey(Empresa, blank=True, null=True, on_delete=models.SET_NULL,
+        related_name="%(app_label)s_%(class)s_empresa_related"
     )
     
 class Base1(Base):
