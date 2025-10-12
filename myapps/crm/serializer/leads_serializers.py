@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Lead
+from ..models import Lead, Request, Fuentes
 from myapps.catalogos.serializer import InstitucionAcademicaSerializer
 from myapps.catalogos.models import InstitucionAcademica
 from .fuentes_serializer import FuenteSerializer
@@ -15,6 +15,9 @@ from rest_framework.exceptions import ValidationError
 from myapps.authentication.models import UserCustomize
 from django.db import transaction
 from myapps.sistema.models import Empresa
+from myapps.control_escolar.models import ProgramaEducativo
+from invitaPro.models import TipoProducto
+
 # from myapps.sistema.serializer import
 
 class LeadsFormSerializar(serializers.ModelSerializer):
@@ -130,17 +133,43 @@ class LeadRecentSerializer(serializers.ModelSerializer):
             
         return format_date if obj.tiempo_primera_respuesta else None
         
-class LeadCreateLandingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lead
-        fields = '__all__'
-        
+class RequestAddSerializer(serializers.Serializer):
+    nombre = serializers.CharField(max_length=100)
+    correo = serializers.EmailField(required=False, allow_blank=True, allow_null=True)
+    telefono = serializers.CharField(max_length=15, allow_blank=True, allow_null=True)
+    fuente = serializers.PrimaryKeyRelatedField(
+        queryset=Fuentes.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    interesado_en = serializers.PrimaryKeyRelatedField(
+        queryset=ProgramaEducativo.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    producto_interes = serializers.PrimaryKeyRelatedField(
+        queryset=TipoProducto.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    empresa = serializers.SlugRelatedField(
+        queryset=Empresa.objects.all(),
+        slug_field="nombre",
+        required=False,
+        allow_null=True
+    )
+    
+    def validate(self, attrs):
+        if not attrs.get("interesado_en") and not attrs.get("producto_interes"):
+            raise serializers.ValidationError(
+                "Se debe indicar un interes para que se pueda almacenar al prospecto"
+            )
+        return attrs
+
     def create(self, validated_data):
-        lead = Lead.objects.create(**validated_data)
-        if not lead:
-            raise ValidationError("lead no creado")
-        lead.save()
-        return lead
+        if validated_data.get("fuente") is None:
+            validated_data['fuente'] = Fuentes.objects.get(nombre="Sitio Web")
+        return Request.objects.create(**validated_data)
     
     
 class VendedorSerializer(serializers.ModelSerializer):

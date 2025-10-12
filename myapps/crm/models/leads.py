@@ -19,7 +19,7 @@ class Lead(Base):
     telefono = models.CharField(max_length=15, blank=True, null=True)
     fuente = models.ForeignKey(Fuentes, on_delete=models.CASCADE, related_name="leads")
     interesado_en = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="leads_interesado", null=True, blank=True)
-    producto_interes = models.ForeignKey('invitaPro.Producto', on_delete=models.CASCADE, null=True, blank=True)
+    producto_interes = models.ForeignKey('invitaPro.TipoProducto', on_delete=models.CASCADE, null=True, blank=True)
     etapa = models.ForeignKey(Etapas, on_delete=models.CASCADE, related_name="leads_etapa")
     estatus = models.ForeignKey(Estatus, on_delete=models.CASCADE, related_name="leads_estatus")
     vendedor_asignado = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='leads_asignados')

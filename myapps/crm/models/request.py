@@ -18,7 +18,7 @@ class Request(Base):
     telefono = models.CharField(max_length=15, blank=True, null=True)
     fuente = models.ForeignKey(Fuentes, on_delete=models.CASCADE, related_name="request")
     interesado_en = models.ForeignKey(ProgramaEducativo, on_delete=models.CASCADE, related_name="request_interesado", null=True, blank=True)
-    producto_interes = models.ForeignKey('invitaPro.Producto', on_delete=models.CASCADE, null=True, blank=True, related_name="request_producto")
+    producto_interes = models.ForeignKey('invitaPro.TipoProducto', on_delete=models.CASCADE, null=True, blank=True, related_name="request_producto")
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True, blank=True)
     city = models.ForeignKey('City', on_delete=models.CASCADE, null=True, blank=True)
     

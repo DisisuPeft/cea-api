@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from ..models import Lead, CampaniaPrograma, Pipline, Estatus, Fuentes, Etapas, Campania
-from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, LeadCreateLandingSerializer, LeadRecentSerializer, VendedorSerializer, CampaniaSerializer
+from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, LeadRecentSerializer, VendedorSerializer, CampaniaSerializer
 from django.utils import timezone
 from django.db.models import Q
 from ..pagination import LeadPagination

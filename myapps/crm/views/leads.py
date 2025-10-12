@@ -26,7 +26,7 @@ from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from ..models import Lead, CampaniaPrograma, Pipline, Estatus, Fuentes, Etapas
-from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, LeadCreateLandingSerializer, LeadRecentSerializer, VendedorSerializer, LeadsFormSerializar
+from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, RequestAddSerializer, LeadRecentSerializer, VendedorSerializer, LeadsFormSerializar
 from django.utils import timezone
 from django.db.models import Q
 from ..pagination import LeadPagination
@@ -190,30 +190,10 @@ class CreateLeadFromLanding(APIView):
     
     
     def post(self, request):
-        print(request.data)
-        lead = {}
-        
-        for i in request.data:
-            if i in request.data and request.data[i]:
-                lead[i] = request.data[i]
-        fuente = Fuentes.objects.get(id=4)
-        etapa = Etapas.objects.get(id=1)
-        estatus = Estatus.objects.get(id=1)
-        if not fuente:
-            return Response("Error al encontrar la fuente", status=status.HTTP_404_NOT_FOUND)
-        if not etapa:
-            return Response("Error al encontrar la etapa inicial del lead", status=status.HTTP_404_NOT_FOUND)
-        if not estatus:
-            return Response("Error al encontrar el estatus inicial del lead", status=status.HTTP_404_NOT_FOUND)
-        lead['fuente'] = fuente.id
-        lead['etapa'] = etapa.id
-        lead['estatus'] = estatus.id
-        lead_serializer = LeadCreateLandingSerializer(data=lead)
-        if lead_serializer.is_valid():
-            lead_serializer.save()
-            return Response("En breve un asesor se pondra en contacto contigo", status=status.HTTP_200_OK)
-        else: 
-            return Response(lead_serializer.errors, status=status.HTTP_200_OK)
+        serializer = RequestAddSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        request = serializer.save()
+        return Response("Gracias por registrarte, en breve un asesor se pondra en contacto", status=status.HTTP_200_OK)
         
         
         
