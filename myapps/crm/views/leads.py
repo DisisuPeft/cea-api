@@ -121,7 +121,7 @@ class LeadsView(APIView):
         
         paginator = LeadPagination()
         result = paginator.paginate_queryset(queryset=queryset, request=request)
-        # print(result)
+        
         if not queryset:
             return Response("No query found", status=status.HTTP_404_NOT_FOUND)
         

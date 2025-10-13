@@ -63,7 +63,8 @@ class TabsView(APIView):
         user = request.user
         # print(permissions)
         # permisos = Permissions.objects.filter(permiso__in=user.permission.all()).distinct()
-        tabs = TabsModulo.objects.filter(user=user.id).filter(modulo__id=6).distinct().order_by('orden')
+        modulo = Modulos.objects.get(name="CRM")
+        tabs = TabsModulo.objects.filter(user=user.id).filter(modulo__id=modulo.id).distinct().order_by('orden')
         # tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=id).distinct().order_by('orden')
         
         # print(tabs_user, tabs_permiso)
