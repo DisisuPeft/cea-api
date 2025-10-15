@@ -12,6 +12,8 @@ from myapps.authentication.authenticate import CustomJWTAuthentication
 from myapps.control_escolar.models import ProgramaEducativo
 from ..serializer import ProgramaEducativoCatalogSerializer
 from ..pagination import ProgramaPagination
+from myapps.control_escolar.serializer import ProgramaEducativoSerializer
+
 # Create your views here.
 
 
@@ -32,4 +34,15 @@ class GetProgramasCatalogView(APIView):
         
         return paginator.get_paginated_response(serializer.data)
         
+
+class GetProgramsRequestView(APIView):
+    permission_classes = [AllowAny]
+    # authentication_classes = [CustomJWTAuthentication]
     
+    def get(self, request):
+        programs = ProgramaEducativo.objects.filter(activo=1)
+        print(programs)
+        if not programs:
+           return Response("No query found", status=status.HTTP_404_NOT_FOUND)
+        serializer = ProgramaEducativoSerializer(programs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -25,18 +25,18 @@ from django.conf import settings
 from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
-from ..models import Lead, CampaniaPrograma, Pipline, Estatus, Fuentes, Etapas
-from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, RequestAddSerializer, LeadRecentSerializer, VendedorSerializer, LeadsFormSerializar
+from ..models import Lead, CampaniaPrograma, Pipline, Estatus, Fuentes, Etapas, Request
+from ..serializer import LeadsSerializer, PipelineSerializer, EstatusSerializer, RequestAddSerializer, LeadRecentSerializer, VendedorSerializer, LeadsFormSerializar, RequestSerializer
 from django.utils import timezone
 from django.db.models import Q
-from ..pagination import LeadPagination
+from ..pagination import LeadPagination, RequestPagination
 from django.db.models import Count
 from myapps.sistema.models import Empresa
 
 # Create your views here.
 # EN formularios siempre devolver el puro serializer 
 
-class RecentLeadsView(APIView):
+class RequestView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
@@ -44,33 +44,33 @@ class RecentLeadsView(APIView):
         user = request.user
         unidad = request.GET.get("unidad")
         admin = user.roleID.filter(name="Administrador").first()
-        salesman = user.roleID.filter(name="Vendedor").first()
+        empresa = request.GET.get("empresa")
         
         if admin:
-            queryset = Lead.objects.filter(Q(institucion__id=unidad)).select_related(
-                'fuente', 'etapa', 'estatus', 'interesado_en', 'vendedor_asignado'
+            queryset = Request.objects.filter(Q(institucion__id=unidad) & Q(empresa__nombre=empresa)).select_related(
+                'fuente', 'producto_interes', 'interesado_en', 'institucion', 'empresa'
             ).order_by("-fecha_creacion")
-            
-        if salesman:
-            queryset = Lead.objects.filter(Q(institucion__id=unidad)&Q(vendedor_asignado__isnull=True)).select_related(
-                'fuente', 'etapa', 'estatus', 'interesado_en', 'vendedor_asignado'
-            ).order_by("-fecha_creacion")
-            
+        
+        request_paginator = RequestPagination()
+              
         self.calculate_time_response(queryset=queryset)
         
         if not queryset:
             return Response("No query found", status=status.HTTP_404_NOT_FOUND)
         
-        serializer = LeadRecentSerializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        result = request_paginator.paginate_queryset(queryset=queryset, request=request)
+        
+        serializer = RequestSerializer(result, many=True)
+        
+        return request_paginator.get_paginated_response(serializer.data)
     
     def calculate_time_response(self, queryset):
         for i in queryset:
-            if i.etapa.nombre == "Interesado":
-                now = timezone.now()
-                date_estimated =  now - i.fecha_creacion
-                i.tiempo_primera_respuesta = date_estimated
-                i.save()
+            now = timezone.now()
+            date_estimated =  now - i.fecha_creacion
+            i.tiempo_primera_respuesta = date_estimated
+            i.save()
+            
 
 
             
@@ -122,12 +122,23 @@ class LeadsView(APIView):
         paginator = LeadPagination()
         result = paginator.paginate_queryset(queryset=queryset, request=request)
         
+        self.calculate_time_response(queryset=queryset)
+        
         if not queryset:
             return Response("No query found", status=status.HTTP_404_NOT_FOUND)
         
         serializer = LeadsSerializer(result, many=True)
         return paginator.get_paginated_response(serializer.data)
-
+    
+    
+    def calculate_time_response(self, queryset):
+        for i in queryset:
+            if i.etapa.nombre == "Interesado":
+                now = timezone.now()
+                date_estimated =  now - i.fecha_creacion
+                i.tiempo_primera_respuesta = date_estimated
+                i.save()
+    
     def post(self, request):
         if not request.data:
             return Response("The request is empty", status=status.HTTP_400_BAD_REQUEST)

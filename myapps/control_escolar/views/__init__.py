@@ -1,2 +1,2 @@
-from .views import GetProgramasCatalogView
+from .views import GetProgramasCatalogView, GetProgramsRequestView
 from .calendario_view import GetCiclosView, ObtainCiclosParamView, RetrieveCiclosParamView

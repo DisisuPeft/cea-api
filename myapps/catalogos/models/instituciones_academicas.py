@@ -3,7 +3,13 @@ from myapps.authentication.models import UserCustomize
 from myapps.sistema.models import Empresa
 
 # from .subcategorias import SubCategory
+# class InstitucionManager(models.Manager):
+#     def get_queryset(self):
+#         return super().get_queryset()
 
+#     def filter_by_empresa(self, empresa):
+#         return self.get_queryset().filter(empresa__nombre=empresa)
+        
 class InstitucionAcademica(models.Model):
     nombre = models.CharField(max_length=150)
     descripcion = models.TextField(blank=True, null=True)
@@ -20,4 +26,4 @@ class InstitucionAcademica(models.Model):
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
     unidad_usuario = models.ManyToManyField(UserCustomize, related_name="unidad_negocio")
     
-    
+    # objects = InstitucionManager()

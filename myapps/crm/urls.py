@@ -1,6 +1,6 @@
 from django.urls import path, re_path
 from .views import (
-    LeadsView, LeadView, CreateLeadFromLanding, RecentLeadsView, EstadisticsLeadsView, PipelineAllView, GetEmpresaView, GetProgramsView, GetUnidadAcademicaView, PipelineUpdateView,
+    LeadsView, LeadView, CreateLeadFromLanding, RequestView, EstadisticsLeadsView, PipelineAllView, GetEmpresaView, GetProgramsView, GetUnidadAcademicaView, PipelineUpdateView,
     GetFuentesView, GetEstatusView, UpdateFuentesView, UpdateEstatusView, GetEtapasPipelineView, GetVendedoresView, CampaniaView, UnidadNegocioView,
 )
 
@@ -8,7 +8,7 @@ urlpatterns = [
     path("leads/all/", LeadsView.as_view(), name="get"),
     path("lead/<int:id>/", LeadView.as_view(), name="get"),
     path("registration/lead-landing/", CreateLeadFromLanding.as_view(), name="post"),
-    path('recent/leads/', RecentLeadsView.as_view(), name="get"),
+    path('recent/leads/', RequestView.as_view(), name="get"),
     path('leads/estadistics/', EstadisticsLeadsView.as_view(), name="get"),
     path("leads/create/", LeadsView.as_view(), name="post"),
     # pipelines

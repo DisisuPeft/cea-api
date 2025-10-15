@@ -21,6 +21,7 @@ class Request(Base):
     producto_interes = models.ForeignKey('invitaPro.TipoProducto', on_delete=models.CASCADE, null=True, blank=True, related_name="request_producto")
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True, blank=True)
     city = models.ForeignKey('City', on_delete=models.CASCADE, null=True, blank=True)
-    
+    institucion = models.ForeignKey(InstitucionAcademica, on_delete=models.CASCADE, null=True, blank=True)
+    tiempo_primera_respuesta = models.DurationField(null=True, blank=True)
 # Anadir tabla mas adelante para trazar el moviento de los leads
 

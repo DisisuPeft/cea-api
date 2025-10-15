@@ -5,3 +5,4 @@ from .fuentes_serializer import FuenteSerializer
 from .campania_serializers import CampaniaSerializer, CampaniaProgramaSerializer
 from .pipeline_serializers import PipelineSerializer, PipelineSerializerCreate, PipelineSerializerUpdate
 from .notas_serializers import NotasSerializer
+from .request import RequestSerializer
