@@ -33,9 +33,9 @@ class StudentUpdateProfile(APIView):
         # profile = {}
         if request.data and id:
             estudiante = Estudiante.objects.get(id=id)
-
+            # print(estudiante)
             update_serializer = UpdateEstudentSerializer(estudiante, data=request.data, partial=True)
-            # print(update_serializer.data)   
+  
             if update_serializer.is_valid():
                 update_serializer.save()
                 return Response("Perfil actualizado con exito", status=status.HTTP_200_OK)

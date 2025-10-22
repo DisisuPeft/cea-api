@@ -59,9 +59,19 @@ class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaterialModulos
         fields = [
-            "file"
+            "id", "file"
         ]
         
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        
+        admin = bool(request and request.user.roleID.filter(name="Administrador").exists())
+        
+        if not admin:
+            return data.pop('file', None)
+        return data
+    
     def get_file(self, obj):
         # Obten el path, si existe, la URL publica directa
         # Si es FileField tendra .name/.url
@@ -83,6 +93,7 @@ class MaterialSerializer(serializers.ModelSerializer):
             )
             # download_url = _force_https(raw_url)
         return {
+            
             "name": display_name,
             "path": path,
             "public_url": public_url,

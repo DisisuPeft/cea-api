@@ -9,12 +9,12 @@ class RequestSerializer(serializers.ModelSerializer):
     tiempo_primera_respuesta = serializers.SerializerMethodField(required=False)
     interesado_en = serializers.SerializerMethodField(required=False)
     producto_interes = serializers.SerializerMethodField(required=False)
-    empresa = serializers.SerializerMethodField(required=False)
+    # empresa = serializers.SerializerMethodField(required=False)
     city = serializers.SerializerMethodField(required=False)
     
     class Meta:
         model=Request
-        fields=["id", "nombre", "correo", "telefono", "fuente", "interesado_en", "producto_interes", "empresa", "city", "tiempo_primera_respuesta"]
+        fields=["id", "nombre", "correo", "telefono", "fuente", "interesado_en", "producto_interes", "city", "tiempo_primera_respuesta"]
         
     def get_fuente(self, obj):
         return obj.fuente.nombre if obj.fuente else None
@@ -44,8 +44,8 @@ class RequestSerializer(serializers.ModelSerializer):
     def get_producto_interes(self, obj):
         return obj.producto_interes.name if obj.producto_interes else None
     
-    def get_empresa(self, obj):
-        return obj.empresa.nombre if obj.empresa else None
+    # def get_empresa(self, obj):
+    #     return obj.empresa.nombre if obj.empresa else None
     
     def get_city(self, obj):
         return obj.city.nombre if obj.city else None

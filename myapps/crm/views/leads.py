@@ -37,18 +37,18 @@ from myapps.sistema.models import Empresa
 # EN formularios siempre devolver el puro serializer 
 
 class RequestView(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
     authentication_classes = [CustomJWTAuthentication]
     # select_related -- para relacion 1 a 1 y 1 a M // prefetch -- para many to many e inversa
     def get(self, request):
         user = request.user
-        unidad = request.GET.get("unidad")
+        # unidad = request.GET.get("unidad")
         admin = user.roleID.filter(name="Administrador").first()
         empresa = request.GET.get("empresa")
         
         if admin:
-            queryset = Request.objects.filter(Q(institucion__id=unidad) & Q(empresa__nombre=empresa)).select_related(
-                'fuente', 'producto_interes', 'interesado_en', 'institucion', 'empresa'
+            queryset = Request.objects.filter(Q(empresa__nombre=empresa)).select_related(
+                'fuente', 'producto_interes', 'interesado_en', 'institucion'
             ).order_by("-fecha_creacion")
         
         request_paginator = RequestPagination()
@@ -80,7 +80,8 @@ class EstadisticsLeadsView(APIView):
     
     def get(self, request):
         unidad = request.GET.get("unidad")
-        # print(unidad)
+        empresa = request.GET.get("empresa")
+        
         leads_count = Lead.objects.filter(institucion__id=unidad).count()
         total_lead_etapa = Lead.objects.filter(institucion__id=unidad).values('etapa__nombre').annotate(total=Count('id'))
         total_lead_programa = Lead.objects.filter(institucion__id=unidad).values('interesado_en__nombre').annotate(total=Count('id'))

@@ -16,6 +16,7 @@ from myapps.estudiantes.models import Estudiante
 from myapps.control_escolar.models import ProgramaEducativo, ModuloEducativo
 from myapps.control_escolar.serializer import ProgramaEducativoCatalogSerializer, ProgramaEducativoCardSerializer, ProgramaShowSerializer, ModuloEducativoViewSerializer
 from myapps.control_escolar.pagination import ProgramaPagination
+from django.db.models import Q
 
 class CursoView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
@@ -70,9 +71,14 @@ class CursoPanelView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     def get(self, request, id):
         accion = request.query_params.get("accion", None)
+        user = request.user
+        is_admin = bool(
+            request
+            and request.user.roleID.filter(name="Administrador").exists()
+        )
         
         if accion == "modulos":
-            return self.get_modulos(id)
+            return self.get_modulos(id, user, admin=is_admin)
 
         if accion == "actividades":
             return self.get_actividades(id)
@@ -80,11 +86,17 @@ class CursoPanelView(APIView):
         if accion == "comunidad":
             return self.get_comunidad(id)
         
-        return self.get_curso(id)
+        return self.get_curso(id, user, admin=is_admin)
 
-    def get_modulos(self, id):
-        # lógica para módulos
-        modulos = ModuloEducativo.objects.filter(programa__id=id)
+    def get_modulos(self, id, user, admin):
+        # curso = ProgramaEducativo.objects.filter(inscripcion__id=user.id).first()
+        # modulos = ModuloEducativo.objects.filter(programa__id=curso.id)
+        qs = ModuloEducativo.objects.all()
+        if admin:
+            modulos = qs.filter(programa__id=id)
+        else:
+            modulos = qs.filter(programa__inscripcion__id=user.id)
+            
         serializer = ModuloEducativoViewSerializer(modulos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -96,10 +108,17 @@ class CursoPanelView(APIView):
         # lógica para resumen
         return Response("obtiene comentarios de la comunidad", status=status.HTTP_200_OK)
     
-    def get_curso(self, id):
-        curso = ProgramaEducativo.objects.get(id=id)
+    def get_curso(self, id, user, admin):
+        qs = ProgramaEducativo.objects.all()
+
+        if admin:
+            curso = qs.filter(id=id).first()
+        else:
+            curso = qs.filter(id=id, inscripcion__id=user.id).first()
+        
         if not curso:
             return Response("Query not found", status=status.HTTP_404_NOT_FOUND)
+        
         serializer = ProgramaShowSerializer(curso)
         return Response([serializer.data], status=status.HTTP_200_OK)
     

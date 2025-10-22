@@ -26,7 +26,9 @@ from django.conf import settings
 from pathlib import Path
 from django.http import JsonResponse
 from django.views import View
+import logging
 
+logger = logging.getLogger(__name__)
 # Create your views here.
 
 class ManageUsersview(APIView):
@@ -95,14 +97,17 @@ class ManageEditUserView(APIView):
     def patch(self, request):
         id = request.GET.get("id")
         estudiante = Estudiante.objects.filter(id=id).first()
-        
+        # print(estudiante)
         if not estudiante:
             return Response("El estudiante no existe.", status=status.HTTP_404_NOT_FOUND)
 
+        # logger.warning("Alerta, el logger funciona")
         
         serializer = UpdateEstudentSerializer(instance=estudiante, data=request.data)
         
         serializer.is_valid(raise_exception=True)
+        
+        serializer.save()
         
         return Response("Estudiante actualizado con exito.", status=status.HTTP_200_OK)
         
@@ -229,9 +234,20 @@ class ManageUploadMaterialDiplomadosview(APIView):
 
     
 class MaterialViewSet(ModelViewSet):
-    queryset = MaterialModulos.objects.all().order_by("-fecha_creacion")
+    queryset = MaterialModulos.objects.filter().order_by("-fecha_creacion")
     serializer_class = MaterialSerializer
-    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]), IsAuthenticated]
+    # permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]), IsAuthenticated]
+    base_permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]), IsAuthenticated]
+    delete_permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
+    
+    def get_permission(self):
+        if self.action == "destroy":
+            perms = self.delete_permission_classes
+        else:
+            perms = self.base_permission_classes
+        
+        return [perm() for perm in perms]
+    
     
     def get_queryset(self):
         qs = super().get_queryset()
@@ -264,7 +280,18 @@ class MaterialViewSet(ModelViewSet):
             filename=filename,
             content_type=content_type,
         )
-        
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.file:
+            instance.file.delete(save=False)
+        self.perform_destroy(instance)
+        return Response(
+            "Recurso eliminado",
+            status=status.HTTP_200_OK
+        )
+
+
 
 class DebugProxyView(View):
     def get(self, request, *args, **kwargs):

@@ -129,11 +129,33 @@ TEMPLATES = [
     },
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {                      # Salida directa a consola
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {name}: {message}',
+            'style': '{',
+        },
+    },
+    'root': {                            # Logger principal
+        'handlers': ['console'],
+        'level': 'DEBUG',                # Cambia a INFO o WARNING si no quieres tanto detalle
+        'formatter': 'verbose',
+    },
+}
+
+
 WSGI_APPLICATION = "school_admin.wsgi.application"
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "cea_db_test",
+#         "NAME": "cea_db",
 #         "USER": "admin",
 #         "PASSWORD": "@dm1n2025",
 #         "HOST": "localhost",

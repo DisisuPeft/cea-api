@@ -7,7 +7,9 @@ from myapps.authentication.models import UserCustomize
 from myapps.authentication.serializers import UserCustomizeSerializer
 from django.db import transaction, IntegrityError
 from myapps.catalogos.models import Genero, NivelEducativo
+import logging
 
+logger = logging.getLogger(__name__)
 
 class UserEstudentSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, validators=[]) 
@@ -142,7 +144,7 @@ class UpdateEstudentSerializer(serializers.Serializer):
         perfil_obj = validated_data.pop('perfil')
         estado = validated_data.pop('lugar_nacimiento')
         municipio = validated_data.pop('municipio')
-        
+        logger.debug("Debug update: instance=%s data=%s", instance, validated_data)
         user_obj = None
         if perfil_obj:
             user_obj = perfil_obj.pop("user", None)
@@ -195,9 +197,11 @@ class UpdateEstudentSerializer(serializers.Serializer):
                     current_perfil.user = current_user
                     current_perfil.save()
             else:
+                # print("result")
                 if email:
                     current_user.email = email
                 if password:
+                    # print(password)
                     current_user.set_password(password)
                 current_user.save()
                 if roles is not None:

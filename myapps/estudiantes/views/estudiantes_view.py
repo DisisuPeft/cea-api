@@ -102,6 +102,7 @@ class StudentUpdateView(APIView):
             estudiante = Estudiante.objects.get(id=request.data['id'])
             if not estudiante:
                 return Response("Student not found", status=status.HTTP_404_NOT_FOUND)
+            print(estudiante)
             update_serializer = EstudianteSerializer(estudiante, data=request.data, partial=True)
             if update_serializer.is_valid():
                 update_serializer.save()

@@ -4,6 +4,17 @@ from myapps.authentication.models import UserCustomize
 from myapps.maestros.models import Maestro
 from myapps.catalogos.models import Ciclos, Periodos
 from myapps.estudiantes.models import Estudiante
+from django.conf import settings
+# from django.dispatch import receiver
+# from django.db.models.signals import post_delete
+
+class BasePrograma(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="mis_recursos",
+        on_delete=models.CASCADE
+    )
+
 
 class TipoPrograma(models.Model):
     nombre = models.CharField(max_length=100)
@@ -172,3 +183,8 @@ class MaterialModulos(models.Model):
     type = models.ForeignKey(TypeFile, on_delete=models.CASCADE, related_name="material", null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True, null=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
+    
+# @receiver(post_delete, sender=MaterialModulos)
+# def borrar_archivo_material(sender, instance, **kwargs):
+#     if instance.file:
+#         instance.file.delete(save=False)
