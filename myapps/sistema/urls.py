@@ -20,6 +20,7 @@ urlpatterns = [
     # Manage programs
     path("plataforma/programas/all/", ManageDiplomadosview.as_view(), name="get"),
     path("plataforma/programas/inscription/", ManageDiplomadosview.as_view(), name="post"),
+    path("plataforma/programas/desinscribir/", ManageDiplomadosview.as_view(), name="patch"),
     path("plataforma/diplomados/documentos/", ManageUploadMaterialDiplomadosview.as_view(), name="get"),
     path("plataforma/diplomados/upload/material/", ManageUploadMaterialDiplomadosview.as_view(), name="post"),
     # Manage users plataforma

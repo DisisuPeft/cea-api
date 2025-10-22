@@ -26,6 +26,7 @@ from django.conf import settings
 from pathlib import Path
 from django.http import JsonResponse
 from django.views import View
+from django.db.models import Exists, OuterRef
 import logging
 
 logger = logging.getLogger(__name__)
@@ -141,15 +142,15 @@ class ManageDiplomadosview(APIView):
     
     def get(self, request, *args, **kwargs):
         
-        # user = request.user
-        
         q_raw = request.GET.get("q") 
         
         q = (q_raw or "").strip()
         
         if q.lower() in {"null", "undefined", "none", "nan"}:
             q = ""
-                
+        
+        estudiante_id = request.query_params.get("estudiante_id")
+        
         queryset = (
             ProgramaEducativo.objects.filter(activo=1).order_by('-fecha_creacion')
         )
@@ -159,6 +160,15 @@ class ManageDiplomadosview(APIView):
                 Q(nombre__icontains=q)
             )
         
+        if estudiante_id:
+            Theough = ProgramaEducativo.inscripcion.through
+            link_qs = Theough.objects.filter(
+                programaeducativo_id=OuterRef("pk"),
+                estudiante_id=estudiante_id,
+            )
+            queryset = queryset.annotate(inscrito=Exists(link_qs))
+        else:
+            queryset = queryset.annotate(inscrito=Exists(ProgramaEducativo.inscripcion.through.objects.none()))
   
         paginator = ProgramaPagination()
 
@@ -166,10 +176,11 @@ class ManageDiplomadosview(APIView):
         serializer = ProgramaShowSerializer(result, many=True)
         
         return paginator.get_paginated_response(serializer.data)
+    
     # evitar inscribir dos veces a un estudiante
-    def post(self, reuest):
-        diplomado_id = reuest.data.pop('curso_id', None)
-        estudiante_id = reuest.data.pop('estudiante_id', None)
+    def post(self, request):
+        diplomado_id = request.data.pop('curso_id', None)
+        estudiante_id = request.data.pop('estudiante_id', None)
         
         diplomado = ProgramaEducativo.objects.filter(id=diplomado_id).first()
         
@@ -177,12 +188,17 @@ class ManageDiplomadosview(APIView):
             return Response("No puedes inscribir 2 veces al mismo estudiante", status=status.HTTP_400_BAD_REQUEST)
         diplomado.inscripcion.add(estudiante_id)
         
-# diplomado.inscripcion.add(estudiante_id)
-        # print(exists)
         return Response("Estudiante inscrito", status=status.HTTP_200_OK)
 
+    def patch(self, request):
+        diplomado_id = request.data.pop('curso_id', None)
+        estudiante_id = request.data.pop('estudiante_id', None)
 
-
+        diplomado = ProgramaEducativo.objects.filter(id=diplomado_id).first()
+        diplomado.inscripcion.remove(estudiante_id)
+        
+        return Response("Estudiante desinscrito", status=status.HTTP_200_OK)
+        
 class ManageUploadMaterialDiplomadosview(APIView):
     permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
     authentication_classes = [CustomJWTAuthentication]
