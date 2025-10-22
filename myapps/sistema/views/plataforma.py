@@ -26,7 +26,7 @@ from django.conf import settings
 from pathlib import Path
 from django.http import JsonResponse
 from django.views import View
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Value, BooleanField
 import logging
 
 logger = logging.getLogger(__name__)
@@ -149,7 +149,14 @@ class ManageDiplomadosview(APIView):
         if q.lower() in {"null", "undefined", "none", "nan"}:
             q = ""
         
-        estudiante_id = request.query_params.get("estudiante_id")
+        raw_est = request.query_params.get("estudiante_id")
+        
+        estudiante_id = None
+        if raw_est and raw_est.lower() not in {"null", "undefined", "none", "nan", ""}:
+            try:
+                estudiante_id = int(raw_est)
+            except (TypeError, ValueError):
+                estudiante_id = None
         
         queryset = (
             ProgramaEducativo.objects.filter(activo=1).order_by('-fecha_creacion')
@@ -168,7 +175,7 @@ class ManageDiplomadosview(APIView):
             )
             queryset = queryset.annotate(inscrito=Exists(link_qs))
         else:
-            queryset = queryset.annotate(inscrito=Exists(ProgramaEducativo.inscripcion.through.objects.none()))
+            queryset = queryset.annotate(inscrito=Value(False, output_field=BooleanField()))
   
         paginator = ProgramaPagination()
 
