@@ -72,6 +72,7 @@ class CursoPanelView(APIView):
     def get(self, request, id):
         accion = request.query_params.get("accion", None)
         user = request.user
+        
         is_admin = bool(
             request
             and request.user.roleID.filter(name="Administrador").exists()
@@ -95,7 +96,7 @@ class CursoPanelView(APIView):
         if admin:
             modulos = qs.filter(programa__id=id)
         else:
-            modulos = qs.filter(programa__inscripcion__id=user.id)
+            modulos = qs.filter(programa__inscripcion__id=user.profile.estudiante.id)
             
         serializer = ModuloEducativoViewSerializer(modulos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -110,11 +111,13 @@ class CursoPanelView(APIView):
     
     def get_curso(self, id, user, admin):
         qs = ProgramaEducativo.objects.all()
-
+        
         if admin:
             curso = qs.filter(id=id).first()
         else:
-            curso = qs.filter(id=id, inscripcion__id=user.id).first()
+            # print(user.id)
+            curso = qs.filter(id=id, inscripcion__id=user.profile.estudiante.id).first()
+            
         
         if not curso:
             return Response("Query not found", status=status.HTTP_404_NOT_FOUND)
