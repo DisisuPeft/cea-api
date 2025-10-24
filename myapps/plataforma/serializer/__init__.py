@@ -1,0 +1,1 @@
+from .comunidad import ComentarioSerializer

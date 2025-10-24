@@ -96,7 +96,8 @@ INSTALLED_APPS = [
     "myapps.maestros",
     "myapps.estudiantes",
     "myapps.control_escolar",
-    "invitaPro"
+    "invitaPro",
+    "myapps.plataforma"
 ]
 
 MIDDLEWARE = [
