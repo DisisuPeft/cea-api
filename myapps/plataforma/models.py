@@ -34,3 +34,23 @@ class Comentario(Base):
             models.Index(fields=["usuario", "-fecha_creacion"])
         ]
         ordering = ["-fecha_creacion"]
+
+
+
+class PlataformasImparticion(Base):
+    nombre = models.CharField(max_length=50) 
+        
+class EnlaceClase(Base):
+    programa = models.ForeignKey('control_escolar.ProgramaEducativo', on_delete=models.CASCADE, null=True, blank=True)
+    link = models.CharField(max_length=255)
+    fecha_imparticion = models.DateField()
+    titulo = models.CharField(max_length=150, blank=True, null=True)
+    descripcion = models.TextField(blank=True, null=True)
+    plataforma = models.ForeignKey(PlataformasImparticion, on_delete=models.CASCADE, blank=True, null=True)
+    password_platform = models.CharField(max_length=50, null=True, blank=True)
+    
+    class Meta:
+        ordering = ["-fecha_imparticion"]
+        indexes = [
+            models.Index(fields=["programa", "-fecha_imparticion"])
+        ]

@@ -17,7 +17,7 @@ from myapps.control_escolar.models import ProgramaEducativo
 class ComentarioViewSet(ModelViewSet):
     queryset = Comentario.objects.select_related("usuario", "diplomado").filter(status=1)
     serializer_class = ComentarioSerializer
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"]), EsAutorORolPermitidoConRoles(["Administrador", "Estudiante"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"]), EsAutorORolPermitidoConRoles(["Administrador"])]
     authentication_classes = [CustomJWTAuthentication]
 
 
