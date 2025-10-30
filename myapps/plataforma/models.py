@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+
 # Create your models here.
 class Base(models.Model):
     class Meta:
@@ -14,16 +15,17 @@ class Base(models.Model):
 
 class Comentario(Base):
     comentario = models.TextField(max_length=500)
-    diplomado = models.ForeignKey('control_escolar.ProgramaEducativo', on_delete=models.CASCADE, related_name="comentario",
+    diplomado = models.ForeignKey('control_escolar.ProgramaEducativo', on_delete=models.CASCADE, related_name="comentarios",
         null=True, blank=True
     )
-    modulo = models.ForeignKey("control_escolar.ModuloEducativo", on_delete=models.CASCADE, related_name="comentario",
+    modulo = models.ForeignKey("control_escolar.ModuloEducativo", on_delete=models.CASCADE, related_name="comentarios",
         null=True, blank=True
     )
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name="comentarios")
     padre = models.ForeignKey("self", on_delete=models.CASCADE, 
         null=True, blank=True, related_name="respuestas"
     )
+
     editado = models.IntegerField(default=0)
     status = models.IntegerField(default=0)
     
@@ -34,8 +36,6 @@ class Comentario(Base):
             models.Index(fields=["usuario", "-fecha_creacion"])
         ]
         ordering = ["-fecha_creacion"]
-
-
 
 class PlataformasImparticion(Base):
     nombre = models.CharField(max_length=50) 
@@ -54,3 +54,20 @@ class EnlaceClase(Base):
         indexes = [
             models.Index(fields=["programa", "-fecha_imparticion"])
         ]
+        
+        
+class ComentarioVisto(Base):
+    comentario = models.ForeignKey(Comentario, on_delete=models.CASCADE, related_name='vistas')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comentarios_vistos')
+    visto_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('comentario', 'usuario')
+        indexes = [
+            models.Index(fields=['usuario']),
+            models.Index(fields=['comentario', 'usuario']),
+        ]
+        
+
+
+

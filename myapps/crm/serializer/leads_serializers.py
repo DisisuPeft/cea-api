@@ -161,9 +161,10 @@ class RequestAddSerializer(serializers.Serializer):
     
     def validate(self, attrs):
         if not attrs.get("interesado_en") and not attrs.get("producto_interes"):
-            raise serializers.ValidationError(
-                "Se debe indicar un interes para que se pueda almacenar al prospecto"
-            )
+            # raise serializers.ValidationError(
+            #     "Se debe indicar un interes para que se pueda almacenar al prospecto"
+            # )
+            pass
         return attrs
 
     def create(self, validated_data):

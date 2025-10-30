@@ -3,7 +3,9 @@ from .programa_educativo_serializer import (
     ProgramaEducativoCatalogSerializer,
     ProgramaEducativoCardSerializer,
     ProgramaShowSerializer,
-    ModuloEducativoViewSerializer
+    ModuloEducativoViewSerializer,
+    ProgramaEducativoLandingSerializer,
+    SubModuloViewSerializer
 )
 
 from .calendario_serializer import (

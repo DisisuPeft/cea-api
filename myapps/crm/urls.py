@@ -1,8 +1,14 @@
-from django.urls import path, re_path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import (
     LeadsView, LeadView, CreateLeadFromLanding, RequestView, EstadisticsLeadsView, PipelineAllView, GetEmpresaView, GetProgramsView, GetUnidadAcademicaView, PipelineUpdateView,
-    GetFuentesView, GetEstatusView, UpdateFuentesView, UpdateEstatusView, GetEtapasPipelineView, GetVendedoresView, CampaniaView, UnidadNegocioView,
+    GetFuentesView, GetEstatusView, UpdateFuentesView, UpdateEstatusView, GetEtapasPipelineView, GetVendedoresView, UnidadNegocioView, CampaniaViewSet
 )
+
+router = DefaultRouter()
+router.register(r"campanias", CampaniaViewSet, basename="campania")
+
+
 
 urlpatterns = [
     path("leads/all/", LeadsView.as_view(), name="get"),
@@ -27,8 +33,8 @@ urlpatterns = [
     path("crm/estatus/update/<int:id>", UpdateEstatusView.as_view(), name="patch"),
     path("crm/etapas/<int:id>/", GetEtapasPipelineView.as_view(), name="get"),
     path("crm/vendedores/", GetVendedoresView.as_view(), name="get"),
-    path('crm/campanias/', CampaniaView.as_view(), name="get"),
+    # path('crm/campanias/', CampaniaView.as_view(), name="get"),
     path("crm/unidades/", UnidadNegocioView.as_view(), name="get"),
     
-
+    path("plataforma/", include(router.urls))
 ]

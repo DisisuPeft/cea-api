@@ -83,12 +83,21 @@ class PestaniaEstudianteView(APIView):
     def get(self, request):
         user = request.user
         # permissions = user.permission.all()
+        admin = user.roleID.filter(name="Administrador").exists()
+        
+        
         
         modulo = Modulos.objects.filter(usuario=user.id).first()
         # print(modulo)
-        
         tabs = TabsModulo.objects.filter(user=user.id).filter(modulo=modulo.id).distinct().order_by('orden')
-        # tabs_permiso = TabsModulo.objects.filter(permiso__in=permissions).filter(modulo=modulo.id).distinct().order_by('orden')
+        
+        if not tabs:
+            return Response("Error al obtener al obtener los submenus, verifica con el administrador", status=status.HTTP_404_NOT_FOUND)
+        
+        # if admin:
+        #     tabs = tabs.objects.filter(user=user.id).filter(modulo=modulo.id).distinct().order_by('orden')
+        # else:
+        #     tabs = tabs.objects.filter(user=user.id).distinct().order_by('orden')
         
         
         # if tabs_user.exists() and tabs_permiso.exists():
@@ -98,8 +107,6 @@ class PestaniaEstudianteView(APIView):
         # else:
         #     tabs = tabs_permiso
 
-        if not tabs:
-            return Response("Error al obtener al obtener los submenus, verifica con el administrador", status=status.HTTP_404_NOT_FOUND)
 
         serializer = PestaniaPlataformaSerializer(tabs, many=True)
 

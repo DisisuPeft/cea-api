@@ -2,7 +2,7 @@ from .leads_serializers import LeadsSerializer, RequestAddSerializer, LeadRecent
 from .estatus_serializer import EstatusSerializer 
 from .etapas_serializers import EtapaSerializer
 from .fuentes_serializer import FuenteSerializer
-from .campania_serializers import CampaniaSerializer, CampaniaProgramaSerializer
+from .campania_serializers import CampaniaProgramaSerializer
 from .pipeline_serializers import PipelineSerializer, PipelineSerializerCreate, PipelineSerializerUpdate
 from .notas_serializers import NotasSerializer
 from .request import RequestSerializer

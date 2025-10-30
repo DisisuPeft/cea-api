@@ -199,13 +199,12 @@ class LeadView(APIView):
 
 class CreateLeadFromLanding(APIView):
     permission_classes = [AllowAny]
-    
-    
+     
     def post(self, request):
         serializer = RequestAddSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         request = serializer.save()
-        return Response("Gracias por registrarte, en breve un asesor se pondra en contacto", status=status.HTTP_200_OK)
+        return Response("Gracias por registrarte, en breve un asesor se pondra en contacto contigo", status=status.HTTP_200_OK)
         
         
         

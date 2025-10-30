@@ -46,6 +46,8 @@ class ProgramaEducativo(models.Model):
     activo = models.IntegerField()
     maestro = models.ManyToManyField(Maestro, related_name="programas", null=True, blank=True)
     modalidad = models.ForeignKey(ModalidadesPrograma, on_delete=models.CASCADE, related_name="programas", null=True, blank=True)
+    imagen_url = models.CharField(max_length=255, null=True, blank=True)
+    banner_url = models.CharField(max_length=255, null=True, blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(null=True, blank=True)
     

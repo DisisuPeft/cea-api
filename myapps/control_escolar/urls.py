@@ -4,7 +4,10 @@ from .views import (
     GetCiclosView,
     RetrieveCiclosParamView,
     ObtainCiclosParamView,
-    GetProgramsRequestView
+    GetProgramsRequestView,
+    GetProgramasView,
+    GetProgramLandingView,
+    GetProgramaView
 )
 
 
@@ -17,8 +20,12 @@ urlpatterns = [
     path('control-escolar/ciclo/', ObtainCiclosParamView.as_view(), name="get"),
     # Programas educativos
     path('control-escolar/programas-educativos/', GetProgramasCatalogView.as_view(), name="get"),
+    path('control-escolar/oferta-educativa/', GetProgramLandingView.as_view(), name="get"),
     # crm
     path('control-escolar/cat/programas/', GetProgramsRequestView.as_view(), name="get"),
+    path('control-escolar/programa/<int:id>/', GetProgramaView.as_view(), name="get"),
+    
+    path('control-escolar/programas/todos/', GetProgramasView.as_view(), name="get")
     # path('catalo')
 
 ]
