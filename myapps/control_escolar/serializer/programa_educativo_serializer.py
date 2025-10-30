@@ -111,7 +111,8 @@ class ProgramaShowSerializer(serializers.ModelSerializer):
             'tipo',
             'duracion_horas',
             'modalidad',
-            'banner_url'
+            'banner_url',
+            "imagen_url"
         ]
         
 
