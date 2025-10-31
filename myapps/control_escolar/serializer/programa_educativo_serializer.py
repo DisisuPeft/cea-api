@@ -101,6 +101,7 @@ class InstitucionProgramSerializer(serializers.ModelSerializer):
 class ProgramaShowSerializer(serializers.ModelSerializer):
     tipo = serializers.SerializerMethodField()
     modalidad = serializers.SerializerMethodField()
+    inscrito = serializers.SerializerMethodField()
     
     class Meta:
         model = ProgramaEducativo
@@ -112,7 +113,8 @@ class ProgramaShowSerializer(serializers.ModelSerializer):
             'duracion_horas',
             'modalidad',
             'banner_url',
-            "imagen_url"
+            "imagen_url",
+            "inscrito"
         ]
         
 
@@ -122,6 +124,9 @@ class ProgramaShowSerializer(serializers.ModelSerializer):
     def get_modalidad(self, obj):
         return obj.modalidad.name if obj.modalidad else None
 
+    def get_inscrito(self, obj):
+        return bool(getattr(obj, "inscrito", False))
+    
     
 class SubModuloViewSerializer(serializers.ModelSerializer):
     class Meta:
