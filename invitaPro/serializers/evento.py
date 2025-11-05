@@ -22,6 +22,7 @@ class ItinerarioPasoSerializer(serializers.ModelSerializer):
             "paso",
             "url_map",
             "password_match",
-            "hour"
+            "hour",
+            "descripcion"
         ]
         
