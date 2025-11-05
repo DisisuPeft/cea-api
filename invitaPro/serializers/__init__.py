@@ -1,1 +1,2 @@
 from .tipo_producto_serializer import TPFormViewSerializar
+from .evento import EventoSerializer, ItinerarioPasoSerializer

@@ -157,8 +157,8 @@ WSGI_APPLICATION = "school_admin.wsgi.application"
 #     "default": {
 #         "ENGINE": "django.db.backends.mysql",
 #         "NAME": "cea_db",
-#         "USER": "root",
-#         "PASSWORD": "",
+#         "USER": "admin",
+#         "PASSWORD": "@dm1n2026",
 #         "HOST": "localhost",
 #         "PORT": "3306",
 #     }
@@ -203,7 +203,7 @@ AUTH_COOKIE_SAMESITE = "None"
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "es-mx"
 
 TIME_ZONE = "America/Mexico_City"
 
