@@ -98,7 +98,7 @@ INSTALLED_APPS = [
     "myapps.control_escolar",
     "invitaPro",
     "myapps.plataforma",
-    "debug_toolbar"
+    # "debug_toolbar"
 ]
 
 MIDDLEWARE = [
