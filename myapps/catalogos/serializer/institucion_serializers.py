@@ -10,4 +10,4 @@ class InstitucionAcademicaSerializer(serializers.ModelSerializer):
 class InstitucionSerializarGeneric(serializers.ModelSerializer):
     class Meta:
         model = InstitucionAcademica
-        fields = ["id", "nombre"]
+        fields = ("id", "nombre")

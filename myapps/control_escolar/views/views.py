@@ -15,7 +15,8 @@ from ..pagination import ProgramaPagination
 from myapps.control_escolar.serializer import ProgramaEducativoSerializer, ProgramaEducativoLandingSerializer, ProgramaShowSerializer, ModuloEducativoViewSerializer, SubModuloViewSerializer
 from rest_framework.viewsets import ModelViewSet
 from django.shortcuts import get_object_or_404
-from myapps.control_escolar.models import SubModulo
+from myapps.control_escolar.models import SubModulo, TipoPrograma
+from myapps.control_escolar.serializer import TipoProgramaSerializer
 
 # Create your views here.
 
@@ -105,3 +106,13 @@ class GetProgramasView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 # class ProgramaEducativoModelViewSet()
+
+class TipoProgramaViewSet(ModelViewSet):
+    queryset = TipoPrograma.objects.all()
+    serializer_class = TipoProgramaSerializer
+    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]
+    
+
+    def get_queryset(self):
+        return super().get_queryset()

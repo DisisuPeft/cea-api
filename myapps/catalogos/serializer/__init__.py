@@ -4,3 +4,4 @@ from .tipo_nivel import TipoNivelSerializer
 from .institucion_serializers import InstitucionAcademicaSerializer, InstitucionSerializarGeneric
 from .estados_republica import EstadosRepublicaSerializer
 from .municipios import MunicipiosSerializer
+from .metodo_pago import MetodoPagoSerializer

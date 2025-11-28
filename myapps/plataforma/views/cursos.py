@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from myapps.estudiantes.serializer import EstudianteSerializer, EstudianteSerializerView, EstudianteEditSerializer
 from myapps.authentication.decorators import role_required
@@ -14,28 +15,38 @@ from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from myapps.estudiantes.models import Estudiante
 from myapps.control_escolar.models import ProgramaEducativo, ModuloEducativo
-from myapps.control_escolar.serializer import ProgramaEducativoCatalogSerializer, ProgramaEducativoCardSerializer, ProgramaShowSerializer, ModuloEducativoViewSerializer
+from myapps.control_escolar.serializer import ProgramaShowSerializer, ModuloEducativoViewSerializer
 from myapps.control_escolar.pagination import ProgramaPagination
+from myapps.control_escolar.models import Inscripcion
+from myapps.plataforma.permission import EsAutorORolPermitido
+from myapps.plataforma.serializer import InscripcionEstudianteSerializer
+from myapps.control_escolar.serializer import ProgramaEducativoSerializer
 from django.db.models import Q
 
 class CursoView(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"]), EsAutorORolPermitido]
     authentication_classes = [CustomJWTAuthentication]
 # Faltaria agregar como medir el avance
     def get(self, request, *args, **kwargs):
-        id = request.user.profile.estudiante.id
+        id = request.user.profile.estudiante.id if request.user else 0
+        # print(id, request.user.profile)
 
         estudiante = Estudiante.objects.filter(id=id).first()
 
         if not estudiante:
             return Response("No existe relacion entre estudiante y usuario, consulta con el administrador", status=status.HTTP_404_NOT_FOUND)
         
-        programas = ProgramaEducativo.objects.filter(inscripcion=estudiante.id).order_by('-fecha_creacion')
-
-        if not programas:
-            return Response("No existen programas educativos", status=status.HTTP_404_NOT_FOUND)
+        inscripciones = Inscripcion.objects.filter(estudiante=estudiante.id).select_related('campania_programa').order_by('-fecha_creacion').only('campania_programa__programa')
+        # print(*inscripciones)
+        if not inscripciones:
+            return Response("No existen inscripciones", status=status.HTTP_404_NOT_FOUND)
         
-        serializer = ProgramaShowSerializer(programas, many=True)
+        # programas = inscripciones.campania_programa.programa
+
+        # if not programas:
+        #     return Response("No existen programas", status=status.HTTP_404_NOT_FOUND)
+
+        serializer = InscripcionEstudianteSerializer(inscripciones, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
         
 
@@ -51,23 +62,23 @@ class CursoPaginatedView(APIView):
         if not estudiante:
             return Response("No existe relacion entre estudiante y usuario, consulta con el administrador", status=status.HTTP_404_NOT_FOUND)
         
-        programas = ProgramaEducativo.objects.filter(inscripcion=estudiante.id).order_by('-fecha_creacion')
-        
-        if not programas:
-            return Response("No existen programas educativos", status=status.HTTP_404_NOT_FOUND)
+        inscripciones = Inscripcion.objects.filter(estudiante=estudiante.id).select_related('campania_programa').order_by('-fecha_creacion').only('campania_programa__programa')
+        # print(*inscripciones)
+        if not inscripciones:
+            return Response("No existen inscripciones", status=status.HTTP_404_NOT_FOUND)
         
         paginator = ProgramaPagination()
         
-        result = paginator.paginate_queryset(queryset=programas, request=request)
+        result = paginator.paginate_queryset(queryset=inscripciones, request=request)
     
         
-        serializer = ProgramaShowSerializer(result, many=True)
+        serializer = InscripcionEstudianteSerializer(result, many=True)
         
         return paginator.get_paginated_response(serializer.data)
     
     
 class CursoPanelView(APIView):
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"])]
     authentication_classes = [CustomJWTAuthentication]
     def get(self, request, id):
         accion = request.query_params.get("accion", None)
@@ -133,8 +144,38 @@ class CuntCursos(APIView):
     def get(self, request):
         estudiante_user = request.user.profile.estudiante.id
         
-        programas_count = ProgramaEducativo.objects.filter(inscripcion=estudiante_user).count()
+        programas_count = Inscripcion.objects.filter(estudiante=estudiante_user).count()
         
         return Response(programas_count, status=status.HTTP_200_OK)
         
+
+
+class CursosEstudianteModelViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Estudiante"]), EsAutorORolPermitido]
+    authentication_classes = [CustomJWTAuthentication]
+    queryset = ProgramaEducativo.objects.all().prefetch_related('campania_programa')
+    serializer_class = ProgramaEducativoSerializer
+
+
+    def get_queryset(self):
+        estudiante_id = self.request.user.profile.estudiante.id
+        programa_id = self.request.query_params.get("programa", None)
+
+        qs = super().get_queryset()
+
+        qs = qs.filter(campania_programa__inscripciones__estudiante=estudiante_id)
+        print(qs)
         
+        # action = self.request.query_params.get("action", None)
+        # if action == "modulos":
+        #     return self.get_modulos(programa_id=programa_id)
+        
+        return qs
+
+
+    @action(detail=False, methods=["get"])
+    def modulos(self, request):
+        qs = ModuloEducativo.objects.all()
+        modulos = qs.filter(programa__id=request.query_params.get("programa", None))
+        serializer = ModuloEducativoViewSerializer(modulos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

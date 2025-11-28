@@ -97,7 +97,8 @@ INSTALLED_APPS = [
     "myapps.estudiantes",
     "myapps.control_escolar",
     "invitaPro",
-    "myapps.plataforma"
+    "myapps.plataforma",
+    "debug_toolbar"
 ]
 
 MIDDLEWARE = [
@@ -110,6 +111,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware"
 ]
 
 ROOT_URLCONF = "school_admin.urls"
@@ -149,6 +151,12 @@ LOGGING = {
         'level': 'DEBUG',                # Cambia a INFO o WARNING si no quieres tanto detalle
         'formatter': 'verbose',
     },
+    'loggers': {
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    },
 }
 
 
@@ -166,7 +174,7 @@ WSGI_APPLICATION = "school_admin.wsgi.application"
 DATABASES = {
     'default': dj_database_url.config(
         conn_max_age=600,
-        ssl_require=not DEBUG  # en Render/producción suele convenir True
+        ssl_require=not DEBUG 
     )
 }
 # DATABASES = {

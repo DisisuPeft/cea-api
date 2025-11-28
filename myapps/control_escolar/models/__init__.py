@@ -1,6 +1,6 @@
 from .asignaciones import Asignaciones
 from .asistencias import Asistencias
-from .inscripciones import Inscripciones
+# from .inscripciones import Inscripciones
 from .matriculas import Matriculas
 from .calificaciones import Calificaciones
 from .programa_educativo import (
@@ -25,6 +25,9 @@ from .programa_educativo import (
     CalendarioModulo,
     SubModulo,
     TypeFile,
-    MaterialModulos
+    MaterialModulos,
+    Inscripcion,
+    Base,
 )
 from .eventos import Evento, TipoEvento
+from .pagos import Pago, TipoPago

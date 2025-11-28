@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.models import UserCustomize
 from myapps.authentication.serializers import UserCustomizeSerializer
@@ -10,8 +11,11 @@ from myapps.perfil.models import User
 from myapps.perfil.serializer import ProfileSerializer
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from myapps.catalogos.models import (Municipios, EstadosRepublica, Especialidades, EstatusMaestro)
-from myapps.catalogos.serializer import EstadosRepublicaSerializer, MunicipiosSerializer
+from myapps.catalogos.serializer import EstadosRepublicaSerializer, MunicipiosSerializer, MetodoPagoSerializer
 from myapps.maestros.serializer import EspecialidadViewSerializer, EstatusViewSerializer
+from myapps.control_escolar.permission import EsOwnerORolPermitido
+from myapps.catalogos.models import MetodoPago
+# from django.utils.timezone import now
 # Create your views here.
 
 class EstadosRepublicaView(APIView):
@@ -62,3 +66,21 @@ class EstatusView(APIView):
             return Response("No existe un estatus para asignar a un docente", status=status.HTTP_404_NOT_FOUND)
         serializer = EstatusViewSerializer(estatus_maestro, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    
+class MetodoPagoModelViewSet(ModelViewSet):
+    queryset = MetodoPago.objects.all().only('id', 'nombre')
+    serializer_class = MetodoPagoSerializer
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"]), EsOwnerORolPermitido]
+    authentication_classes = [CustomJWTAuthentication]
+    
+    
+    def get_queryset(self):
+        # paginated = self.request.query_params.get('paginated')
+        # print(paginated)
+        qs =  super().get_queryset()
+        
+        qs = qs.order_by('-fecha_creacion')
+        
+        return qs

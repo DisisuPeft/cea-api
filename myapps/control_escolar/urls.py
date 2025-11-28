@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path, include
 from .views import (
     GetProgramasCatalogView,
     GetCiclosView,
@@ -7,10 +7,24 @@ from .views import (
     GetProgramsRequestView,
     GetProgramasView,
     GetProgramLandingView,
-    GetProgramaView
+    GetProgramaView,
+    ProgramaViewSet,
+    TipoProgramaViewSet,
+    InscripcionModelViewSet,
+    TipoPagoViewSet,
+    PagosModelViewSet,
+    GetProgramasEstudianteView
 )
 
+from rest_framework.routers import DefaultRouter
 
+router = DefaultRouter()
+
+router.register(r"programas", ProgramaViewSet, basename="programa")
+router.register(r"tipos-programas", TipoProgramaViewSet, basename="tipo-programa")
+router.register(r"inscripciones", InscripcionModelViewSet, basename="inscripcion")
+router.register(r"tipos-pagos", TipoPagoViewSet, basename="tipo-pago")
+router.register(r"pagos", PagosModelViewSet, basename="pago")
 
 urlpatterns = [
     # Ciclos
@@ -25,7 +39,8 @@ urlpatterns = [
     path('control-escolar/cat/programas/', GetProgramsRequestView.as_view(), name="get"),
     path('control-escolar/programa/<int:id>/', GetProgramaView.as_view(), name="get"),
     
-    path('control-escolar/programas/todos/', GetProgramasView.as_view(), name="get")
+    path('control-escolar/programas/todos/', GetProgramasView.as_view(), name="get"),
+    path('control-escolar/programas/oferta/', GetProgramasEstudianteView.as_view(), name="get"),
     # path('catalo')
-
+    path("control-escolar/", include(router.urls))
 ]

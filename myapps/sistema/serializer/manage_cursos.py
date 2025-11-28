@@ -43,15 +43,16 @@ class TypeDocumentSerializer(serializers.ModelSerializer):
         fields = ["id", "nombre"]
         
 
-def _display_name_from_path(path: str) -> str:
-    name = os.path.basename(path or "")
-    # Elimina los prefijos para mostrar a usuarios
-    return re.sub(r'^(programa)_\d+_', '', name, flags=re.I)
-def _force_https(url: str) -> str:
-    p = urlparse(url)
-    if p.scheme != "https":
-        p = p._replace(scheme="https")
-    return urlunparse(p)
+    # def _display_name_from_path(path: str) -> str:
+    #     name = os.path.basename(path or "")
+    #     # Elimina los prefijos para mostrar a usuarios
+    #     return re.sub(r'^(programa)_\d+_', '', name, flags=re.I)
+    
+    def _force_https(url: str) -> str:
+        p = urlparse(url)
+        if p.scheme != "https":
+            p = p._replace(scheme="https")
+        return urlunparse(p)
 
 class MaterialSerializer(serializers.ModelSerializer):
     file = serializers.SerializerMethodField()
@@ -82,7 +83,7 @@ class MaterialSerializer(serializers.ModelSerializer):
             path = str(obj.file or "")
             public_url = None
             
-        display_name = _display_name_from_path(path)
+        display_name = self._display_name_from_path(path)
         
         # URL absoula al endpoint de descarga
         download_url = None
@@ -95,7 +96,14 @@ class MaterialSerializer(serializers.ModelSerializer):
         return {
             
             "name": display_name,
-            "path": path,
-            "public_url": public_url,
-            "download_url": download_url
+            "id": obj.id,
+            # "path": path,
+            # "public_url": public_url,
+            # "download_url": download_url
         }
+
+    @staticmethod
+    def _display_name_from_path(path):
+        name = os.path.basename(path or "")
+        # Elimina los prefijos para mostrar a usuarios
+        return re.sub(r'^(programa)_\d+_', '', name, flags=re.I)

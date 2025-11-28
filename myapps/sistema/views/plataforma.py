@@ -1,7 +1,7 @@
 from django.utils.decorators import method_decorator  # importante
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, renderers
 from rest_framework.views import APIView
 from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
@@ -86,7 +86,7 @@ class ManageEditUserView(APIView):
         if not id or request.data:
             return Response("id or request empty", status=status.HTTP_400_BAD_REQUEST)
         
-        estudiante = Estudiante.objects.get(id=id)
+        estudiante = Estudiante.objects.prefetch_related('inscripcion').get(id=id)
         
         if not estudiante:
             return Response("Estudiante not found", status=status.HTTP_404_NOT_FOUND)
@@ -184,27 +184,6 @@ class ManageDiplomadosview(APIView):
         
         return paginator.get_paginated_response(serializer.data)
     
-    # evitar inscribir dos veces a un estudiante
-    def post(self, request):
-        diplomado_id = request.data.pop('curso_id', None)
-        estudiante_id = request.data.pop('estudiante_id', None)
-        
-        diplomado = ProgramaEducativo.objects.filter(id=diplomado_id).first()
-        
-        if diplomado.inscripcion.filter(id=estudiante_id).exists():
-            return Response("No puedes inscribir 2 veces al mismo estudiante", status=status.HTTP_400_BAD_REQUEST)
-        diplomado.inscripcion.add(estudiante_id)
-        
-        return Response("Estudiante inscrito", status=status.HTTP_200_OK)
-
-    def patch(self, request):
-        diplomado_id = request.data.pop('curso_id', None)
-        estudiante_id = request.data.pop('estudiante_id', None)
-
-        diplomado = ProgramaEducativo.objects.filter(id=diplomado_id).first()
-        diplomado.inscripcion.remove(estudiante_id)
-        
-        return Response("Estudiante desinscrito", status=status.HTTP_200_OK)
         
 class ManageUploadMaterialDiplomadosview(APIView):
     permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
@@ -262,6 +241,7 @@ class MaterialViewSet(ModelViewSet):
     # permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]), IsAuthenticated]
     base_permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]), IsAuthenticated]
     delete_permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
+    renderer_classes = [renderers.JSONRenderer]
     
     def get_permission(self):
         if self.action == "destroy":

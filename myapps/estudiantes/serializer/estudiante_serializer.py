@@ -7,6 +7,7 @@ from myapps.authentication.models import UserCustomize
 from myapps.authentication.serializers import UserCustomizeSerializer
 from django.db import transaction, IntegrityError
 from myapps.catalogos.models import Genero, NivelEducativo
+from myapps.control_escolar.serializer import InscripcionSerializer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -59,9 +60,11 @@ class EstudianteSerializer(serializers.ModelSerializer):
     # municipio_name = serializers.SerializerMethodField()
     # user = serializers.CharField(required=False)
     perfil = ProfileEditSerializer(required=False)
+    inscripcion = InscripcionSerializer(required=False, many=True)
+    # inscrito = serializers.SerializerMethodField()
     class Meta:
         model = Estudiante
-        fields = ["id", "curp", "rfc", "especialidad", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "perfil", "municipio"]
+        fields = ["id", "curp", "rfc", "especialidad", "matricula", "lugar_nacimiento", "direccion", "tutor_nombre", "tutor_telefono", "activo", "grupo", "perfil", "municipio", "inscripcion"]
     
     @transaction.atomic
     def create(self, validated_data):
@@ -110,6 +113,8 @@ class EstudianteSerializer(serializers.ModelSerializer):
     def get_lugar_nacimiento_name(self, obj):
         return {"id": obj.lugar_nacimiento.id, "name": obj.lugar_nacimiento.name} if obj.lugar_nacimiento else None
     
+    # def get_inscrito(self, obj):
+    #     return bool(getattr(obj, "inscrito", False))
     # def get_municipio_name(self, obj):
     #     return obj.municipio.name if obj.municipio else None
 class ProfileEstudianteSerializer(serializers.ModelSerializer):
@@ -153,6 +158,7 @@ class UpdateEstudentSerializer(serializers.Serializer):
             setattr(instance, field, value)
         instance.lugar_nacimiento_id = estado
         instance.municipio_id = municipio
+        print(instance.municipio_id, municipio)
         instance.save()
         # Obtiene y resuelve referencias actuales y toleran None
         current_perfil = getattr(instance, "perfil", None)

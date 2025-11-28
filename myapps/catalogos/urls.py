@@ -1,7 +1,11 @@
-from django.urls import path, re_path
-from .views import NivelesEducativosView, GeneroView, EstadosRepublicaView, MunicipioView, EspecialidadView, EstatusView
+from django.urls import path, include
+from .views import NivelesEducativosView, GeneroView, EstadosRepublicaView, MunicipioView, EspecialidadView, EstatusView, InstitutosModelViewSet, MetodoPagoModelViewSet
+from rest_framework.routers import DefaultRouter
 
+router = DefaultRouter()
 
+router.register(r'institutos', InstitutosModelViewSet, basename="instituto")
+router.register(r'metodos-pago', MetodoPagoModelViewSet, basename="metodo-pago")
 
 urlpatterns = [
 
@@ -11,13 +15,6 @@ urlpatterns = [
     path('catalogos/entidad/municipios/<int:id>', MunicipioView.as_view(), name="get"),
     path('catalagos/especialidades/all/', EspecialidadView.as_view(), name="get"),
     path('catalagos/maestro/status/all/', EstatusView.as_view(), name="get"),
-    # path('cea/usuarios/crear/', UsuariosAdministrador.as_view(), name="post"),
-    # path('auth/refresh/', CustomTokenRefreshView.as_view()),
-    # path('auth/verify/', CustomTokenVerifyView.as_view()),
-    # path('auth/register/', RegisterView.as_view()),
-    # path('logout/', LogoutView.as_view()),
-    
 
-    # path('auth/user/', ProfileView.as_view()),
-    # path('check/user/', CheckUser.as_view()),
+    path('catalagos/', include(router.urls))
 ]

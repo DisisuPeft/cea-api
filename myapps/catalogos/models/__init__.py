@@ -15,3 +15,4 @@ from .instituciones_academicas import InstitucionAcademica
 from .estados_republica import EstadosRepublica
 from .municipios import Municipios
 from .maestros import EstatusMaestro
+from .metodopago import MetodoPago

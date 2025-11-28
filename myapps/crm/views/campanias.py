@@ -30,13 +30,15 @@ class CampaniaViewSet(ModelViewSet):
     
     def get_queryset(self):    
         return super().get_queryset()
-
+    
+    @transaction.atomic
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response("La campaña fue creada con exito", status=status.HTTP_200_OK)
     
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()

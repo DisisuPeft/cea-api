@@ -5,7 +5,10 @@ from .programa_educativo_serializer import (
     ProgramaShowSerializer,
     ModuloEducativoViewSerializer,
     ProgramaEducativoLandingSerializer,
-    SubModuloViewSerializer
+    SubModuloViewSerializer,
+    InscripcionSerializer,
+    InscripcionDetalleSerializer,
+    EstudianteConInscripcionesSerializer
 )
 
 from .calendario_serializer import (
@@ -13,3 +16,6 @@ from .calendario_serializer import (
     CicloParamSerializer,
     CicloSerializerQueryState
 )
+
+from .genericos import TipoProgramaSerializer
+from .pagos import TipoPagoSerializer, PagoSerializer

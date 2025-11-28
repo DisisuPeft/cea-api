@@ -119,8 +119,8 @@ class AssignTabsView(APIView):
     def get(self, request, id):
         if not id:
             return Response("Not id provided", status=status.HTTP_400_BAD_REQUEST)
-        
-        tabs = TabsModulo.objects.filter(modulo__id=id)
+        permitedTabs = ["Inicio", "Mi aprendizaje", "Perfil"]
+        tabs = TabsModulo.objects.filter(name__in=permitedTabs)
         
         if not tabs:
             return Response("Submodules not found", status=status.HTTP_404_NOT_FOUND)
