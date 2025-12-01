@@ -22,14 +22,16 @@ from django.db import transaction
 # EN formularios siempre devolver el puro serializer 
 
 class CampaniaViewSet(ModelViewSet):
-    queryset = CampaniaPrograma.objects.select_related("campania", "programa")
+    queryset = CampaniaPrograma.objects.all()
     serializer_class = CampaniaProgramaSerializer
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante"]), EsAutorORolPermitidoConRoles(["Administrador"])]
     authentication_classes = [CustomJWTAuthentication]
     
     
-    def get_queryset(self):    
-        return super().get_queryset()
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.select_related("campania", "programa")
+        return qs
     
     @transaction.atomic
     def create(self, request):

@@ -62,4 +62,4 @@ class CampaniaProgramaSerializer(serializers.ModelSerializer):
         return {"id": obj.campania.id, "nombre": obj.campania.nombre, "fecha_inicio": obj.campania.fecha_inicio, "fecha_fin": obj.campania.fecha_fin, "activo": obj.campania.activo} if obj.campania else None
 
     def get_programa_r(self, obj):
-        return {"id": obj.programa.id, "nombre": obj.programa.nombre} if obj.programa else None
+        return {"id": obj.programa.id, "nombre": obj.programa.nombre, "imagen_url": obj.programa.imagen_url, "descripcion": obj.programa.descripcion} if obj.programa else None

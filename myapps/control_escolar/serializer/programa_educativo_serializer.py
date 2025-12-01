@@ -161,8 +161,8 @@ class ProgramaEducativoCatalogSerializer(serializers.ModelSerializer):
     
     def get_campania_programa(self, obj):
         # Import tardío para evitar el ciclo
+        qs = obj.campania_programa.filter(programa=obj.id)
         from myapps.crm.serializer import CampaniaProgramaSerializer
-        qs = obj.campania_programa.all()
         return CampaniaProgramaSerializer(qs, many=True).data
     
     @transaction.atomic

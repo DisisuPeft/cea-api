@@ -46,7 +46,8 @@ class ProgramaViewSet(ModelViewSet):
                 estudiante_id = None
             qs = qs.exclude(campania_programa__inscripciones__estudiante_id=estudiante_id)
             
-        qs = qs.filter(campania_programa__campania__activo=1).distinct()
+        qs = qs.filter(campania_programa__campania__activo=1)
+        # .distinct()
         
         qs = qs.prefetch_related('modulos', 'campania_programa')
         return qs
@@ -54,7 +55,6 @@ class ProgramaViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', None)
         instance = self.get_object()
-        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
