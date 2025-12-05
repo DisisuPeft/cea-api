@@ -108,8 +108,18 @@ class PagosModelViewSet(ModelViewSet):
         ).distinct()
 
         estudiante_id = self.request.query_params.get('estudiante_id')
+        student_name = self.request.query_params.get(
+            "q"
+        )
         if estudiante_id:
             qs = qs.filter(id=estudiante_id)
+        
+        if student_name:
+            qs = qs.filter(
+                Q(perfil__nombre__icontains=student_name) |
+                Q(perfil__apellidoP__icontains=student_name) |
+                Q(perfil__apellidoM__icontains=student_name)
+            )
         
         return qs
     
