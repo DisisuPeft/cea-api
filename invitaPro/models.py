@@ -127,6 +127,12 @@ class Evento(Base):
         return self.name
 
 
+class Invitados(Base):
+    nombre = models.CharField(max_length=100)
+    pases = models.PositiveBigIntegerField(null=True, blank=True)
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name="invitados", null=True, blank=True)
+
+
 class ItinerarioPaso(Base):
         evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name="pasos")
         titulo = models.CharField(max_length=120)
