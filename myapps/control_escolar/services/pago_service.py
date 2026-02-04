@@ -142,7 +142,9 @@ class PagoService:
         return {
             'valido': True,
             'mensaje': 'Selección de conceptos válida',
-            'conceptos_data': conceptos_data
+            'conceptos_data': conceptos_data,
+            'costo_inscripcion': costos['inscripcion'],
+            'tiene_inscripcion': tiene_inscripcion,
         }
 
     def _aplicar_seleccion_manual(self, conceptos_data, notas):

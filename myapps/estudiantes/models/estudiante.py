@@ -19,3 +19,5 @@ class Estudiante(models.Model):
     activo = models.IntegerField()
     fecha_creacion = models.DateField(auto_now=True)
     fecha_actualizacion = models.DateField(null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    telefono_adicional = models.CharField(max_length=12, null=True, blank=True)

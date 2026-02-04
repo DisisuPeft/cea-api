@@ -20,6 +20,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             if not user.is_active:
                 raise exceptions.AuthenticationFailed('User is deactivated')
 
+        return super().validate(attrs)
+
 class PermissionCustomizeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permissions

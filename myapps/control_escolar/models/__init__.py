@@ -30,4 +30,4 @@ from .programa_educativo import (
     Base,
 )
 from .eventos import Evento, TipoEvento
-from .pagos import Pago, TipoPago
+from .pagos import Pago, TipoPago, Fichas, Comisiones

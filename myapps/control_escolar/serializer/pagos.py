@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from myapps.control_escolar.models import TipoPago, Pago
+from myapps.control_escolar.models.pagos import Comisiones, Fichas
+
 
 class TipoPagoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,3 +22,15 @@ class PagoSerializer(serializers.ModelSerializer):
             'periodo', 'numero_pago', 'notas', 'concepto'
         )
         read_only_fields = ('fecha_pago',)
+
+
+class FichasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fichas
+        fields = ('id', 'estudiante', 'campania_programa', 'vendedor')
+
+
+class ComisionesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comisiones
+        fields = ("id", 'monto', 'ficha')

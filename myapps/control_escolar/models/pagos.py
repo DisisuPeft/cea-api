@@ -1,3 +1,4 @@
+
 from django.db import models
 from myapps.control_escolar.models import Inscripcion, Base
 
@@ -50,3 +51,16 @@ class Pago(Base):
     
     def __str__(self):
         return f"{self.inscripcion.estudiante} - {self.tipo_pago.nombre} - ${self.monto}"
+    
+    
+class Fichas(Base):
+    estudiante = models.ForeignKey('estudiantes.estudiante', on_delete=models.CASCADE, related_name="fichas")
+    campania_programa = models.ForeignKey('crm.CampaniaPrograma', on_delete=models.CASCADE, related_name="fichas")
+    vendedor = models.ForeignKey("authentication.UserCustomize", on_delete=models.CASCADE, related_name="fichas")
+    autorizado = models.BooleanField(default=False)
+    autorizado_by = models.ForeignKey('authentication.UserCustomize', on_delete=models.CASCADE, related_name="autorizado_fichas", null=True, blank=True)
+
+
+class Comisiones(Base):
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+    ficha = models.ForeignKey(Fichas, on_delete=models.CASCADE,related_name="comisiones")

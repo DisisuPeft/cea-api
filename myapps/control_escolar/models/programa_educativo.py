@@ -64,7 +64,7 @@ class ProgramaEducativo(Base):
 class Inscripcion(Base):
     estudiante = models.ForeignKey('estudiantes.Estudiante', on_delete=models.CASCADE, related_name="inscripcion")
     campania_programa = models.ForeignKey('crm.CampaniaPrograma', on_delete=models.CASCADE, related_name="inscripciones")
-    fecha_inscripcion = models.DateField(auto_now_add=True)
+    fecha_inscripcion = models.DateField(auto_now_add=True, null=True, blank=True)
     estado = models.IntegerField(default=0) 
     costo_inscripcion_acordado = models.DecimalField(
         max_digits=10, 

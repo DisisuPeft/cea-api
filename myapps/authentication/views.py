@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from myapps.authentication.serializers import UserCustomizeSerializer
+from myapps.authentication.serializers import UserCustomizeSerializer, CustomTokenObtainPairSerializer
 from rest_framework import generics, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -30,6 +30,7 @@ from myapps.authentication.authenticate import CustomJWTAuthentication
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
+    serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
         # print("Datos de la solicitud:", request.data)

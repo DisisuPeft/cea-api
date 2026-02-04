@@ -72,7 +72,7 @@ class EstatusView(APIView):
 class MetodoPagoModelViewSet(ModelViewSet):
     queryset = MetodoPago.objects.all().only('id', 'nombre')
     serializer_class = MetodoPagoSerializer
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"]), EsOwnerORolPermitido]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"]), EsOwnerORolPermitido]
     authentication_classes = [CustomJWTAuthentication]
     
     

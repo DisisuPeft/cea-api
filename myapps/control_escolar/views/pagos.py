@@ -31,7 +31,7 @@ from myapps.control_escolar.serializer import PagoSerializer, TipoPagoSerializer
 class TipoPagoViewSet(ModelViewSet):
     queryset = TipoPago.objects.all()
     serializer_class = TipoPagoSerializer
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"]), EsOwnerORolPermitido]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"]), EsOwnerORolPermitido]
     authentication_classes = [CustomJWTAuthentication]
     
 

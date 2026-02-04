@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator  # importante
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from myapps.plataforma.permission import EsAutorORolPermitidoConRoles
+from myapps.plataforma.permission import EsAutorORolPermitidoConRoles, EsAutorORolPermitido
 from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
@@ -14,9 +14,10 @@ from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.authentication.authenticate import CustomJWTAuthentication
 from rest_framework.viewsets import ModelViewSet
 from myapps.crm.models import CampaniaPrograma
-from myapps.crm.serializer import CampaniaProgramaSerializer
+from myapps.crm.serializer import CampaniaProgramaSerializer, CampaniaSimpleSerializer
 from django.utils.timezone import now
 from django.db import transaction
+from myapps.crm.services import CampaniaProgramaService
 
 # Create your views here.
 # EN formularios siempre devolver el puro serializer 
@@ -90,5 +91,12 @@ class CampaniaViewSet(ModelViewSet):
         return Response("Campania eliminada con exito", status=status.HTTP_200_OK)                
         
 
-
+class CampaniaProgramaGenericView(APIView):
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Vendedor"]), EsAutorORolPermitido]
+    
+    def get(self, request, *args, **kwargs):
+        campania_programa = CampaniaProgramaService.get_campanias_programas()
+        # serializer = CampaniaSimpleSerializer(campania_programa, many=True)
+        return Response(campania_programa, status=status.HTTP_200_OK)
 
