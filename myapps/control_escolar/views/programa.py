@@ -12,7 +12,8 @@ from myapps.authentication.permissions import HasRoleWithRoles
 from myapps.control_escolar.models import Inscripcion
 from myapps.control_escolar.models import Pago
 from django.db import transaction
-
+from myapps.authentication.models import Roles
+from django.shortcuts import get_object_or_404
 from myapps.control_escolar.services.repositories.fichas import FichasService
 from myapps.crm.models import CampaniaPrograma
 from myapps.estudiantes.models import Estudiante, estudiante
@@ -155,6 +156,7 @@ class InscripcionModelViewSet(ModelViewSet):
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated, HasRoleWithRoles(["Administrador" ,"Vendedor"])])
     def applyficha(self, request):
         campania_programa_id = request.query_params.get('campania')
+        print(campania_programa_id)
         data = request.data.copy()
         perfil = data.pop('perfil')
         precios = data.pop('precios')
@@ -277,6 +279,65 @@ class InscripcionModelViewSet(ModelViewSet):
     def fichas(self, request):
         service = FichasService.get_fichas(request.user.id)
         return Response(service, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['PATCH'], permission_classes=[IsAuthenticated, HasRoleWithRoles(['Administrador' ,"Tutor"])])
+    def autorizar_ficha(self, request):
+        switch_value = request.data.get('value')
+        id_str = request.query_params.get('identificador')
+        id_ficha = request.query_params.get('ficha')
+
+        if switch_value == "off":
+            return Response(
+                {"detail": "No se permite desactivar la ficha."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validar y convertir ID
+        try:
+            id_int = int(id_str)
+        except (ValueError, TypeError):
+            return Response(
+                {"detail": "ID inválido"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Validar y convertir ID
+        try:
+            ficha_int = int(id_ficha)
+        except (ValueError, TypeError):
+            return Response(
+                {"detail": "ID inválido"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        ficha = Fichas.objects.get(id=ficha_int)
+        # Obtener estudiante
+        estudiante = get_object_or_404(Estudiante, id=id_int)
+
+        # Crear usuario
+        user = UserCustomize.objects.create(email=estudiante.email)
+        user.profile = estudiante.perfil
+
+        # Asignar rol
+        try:
+            role = Roles.objects.get(name="Estudiante")
+            user.roleID.add(role)  # O user.roleID.set([role])
+        except Roles.DoesNotExist:
+            return Response(
+                {"detail": "Rol Estudiante no existe"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        # Establecer contraseña
+        user.set_password("UNSZA.123")
+        user.save()  # ← No olvides guardar
+        estudiante.activo = 1
+        ficha.autorizado = 1
+        ficha.save()
+        estudiante.save()
+        return Response(
+            {"message": "Ficha autorizada exitosamente"},
+            status=status.HTTP_200_OK
+        )
 
 class GetProgramasEstudianteView(APIView):
     permission_classes = [IsAuthenticated, HasRoleWithRoles(["Estudiante"]), EsOwnerORolPermitido]

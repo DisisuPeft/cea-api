@@ -54,7 +54,7 @@ class Pago(Base):
     
     
 class Fichas(Base):
-    estudiante = models.ForeignKey('estudiantes.estudiante', on_delete=models.CASCADE, related_name="fichas")
+    estudiante = models.ForeignKey('estudiantes.estudiante', on_delete=models.CASCADE, related_name="fichas", null=True, blank=True)
     campania_programa = models.ForeignKey('crm.CampaniaPrograma', on_delete=models.CASCADE, related_name="fichas")
     vendedor = models.ForeignKey("authentication.UserCustomize", on_delete=models.CASCADE, related_name="fichas")
     autorizado = models.BooleanField(default=False)

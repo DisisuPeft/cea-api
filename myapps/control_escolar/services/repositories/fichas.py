@@ -14,7 +14,7 @@ class FichasService:
     def get_fichas(user_id):
         with connection.cursor() as cursor:
             cursor.execute("""
-                SELECT pe.nombre as inscrito, ee.email,CONCAT(pu.nombre,' ',pu.apellidoP,' ',pu.apellidoM) as nombreAlumno, f.autorizado, c.monto as comision  FROM control_escolar_fichas f
+                SELECT pe.nombre as inscrito, ee.email,CONCAT(pu.nombre,' ',pu.apellidoP,' ',pu.apellidoM) as nombreAlumno, f.autorizado, c.monto as comision, ee.id as identificador_alumno, f.id  FROM control_escolar_fichas f
                 INNER JOIN crm_campaniaprograma cp on f.campania_programa_id = cp.id
                 INNER JOIN control_escolar_programaeducativo pe on cp.programa_id = pe.id
                 INNER JOIN estudiantes_estudiante ee on f.estudiante_id = ee.id
