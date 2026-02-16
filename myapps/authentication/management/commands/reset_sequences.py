@@ -10,39 +10,31 @@ class Command(BaseCommand):
 
         try:
             with connection.cursor() as cursor:
-                # Primero verificar el MAX real
-                cursor.execute("SELECT MAX(id) FROM authentication_usercustomize")
-                max_id = cursor.fetchone()[0]
-                print(f"📊 MAX ID in authentication_usercustomize: {max_id}")
-
+                # Método alternativo: buscar todas las secuencias directamente
                 cursor.execute("""
-                               SELECT table_name, column_name
-                               FROM information_schema.columns
-                               WHERE column_default LIKE 'nextval%'
-                                 AND table_schema = 'public'
+                               SELECT schemaname,
+                                      sequencename,
+                                      split_part(sequencename, '_', 1) || '_' ||
+                                      split_part(sequencename, '_', 2) as table_name
+                               FROM pg_sequences
+                               WHERE schemaname = 'public'
                                """)
 
-                tables = cursor.fetchall()
-                print(f"📊 Found {len(tables)} sequences to reset")
+                sequences = cursor.fetchall()
+                print(f"📊 Found {len(sequences)} sequences")
 
-                for table, column in tables:
-                    # Mostrar el MAX antes de resetear
+                for schema, seq_name, table_name in sequences:
+                    # Obtener el MAX de la tabla
                     try:
-                        cursor.execute(f"SELECT MAX({column}) FROM {table}")
-                        current_max = cursor.fetchone()[0]
-                        print(f"📈 {table}.{column} - Current MAX: {current_max}")
-                    except:
-                        current_max = 0
+                        cursor.execute(f"SELECT MAX(id) FROM {table_name}")
+                        max_val = cursor.fetchone()[0] or 0
 
-                    # Resetear
-                    cursor.execute(f"""
-                        SELECT setval(
-                            pg_get_serial_sequence('{table}', '{column}'),
-                            GREATEST(COALESCE((SELECT MAX({column}) FROM {table}), 1), 1),
-                            true
-                        );
-                    """)
-                    print(f'✅ Reset: {table}.{column} to {current_max or 1}')
+                        # Resetear la secuencia
+                        cursor.execute(f"SELECT setval('{seq_name}', {max(max_val, 1)}, true)")
+
+                        print(f'✅ Reset: {seq_name} → {max_val}')
+                    except Exception as e:
+                        print(f'⚠️  Skip {seq_name}: {e}')
 
             print("✅ SEQUENCE RESET COMPLETED!")
         except Exception as e:
