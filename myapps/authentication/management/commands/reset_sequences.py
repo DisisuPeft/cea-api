@@ -6,7 +6,7 @@ class Command(BaseCommand):
     help = 'Reset Postgres sequences'
 
     def handle(self, *args, **options):
-        print("🔄 STARTING SEQUENCE RESET...")
+        print("STARTING SEQUENCE RESET...")
 
         try:
             with connection.cursor() as cursor:
@@ -21,7 +21,7 @@ class Command(BaseCommand):
                                """)
 
                 sequences = cursor.fetchall()
-                print(f"📊 Found {len(sequences)} sequences")
+                print(f"Found {len(sequences)} sequences")
 
                 for schema, seq_name, table_name in sequences:
                     # Obtener el MAX de la tabla
@@ -32,13 +32,13 @@ class Command(BaseCommand):
                         # Resetear la secuencia
                         cursor.execute(f"SELECT setval('{seq_name}', {max(max_val, 1)}, true)")
 
-                        print(f'✅ Reset: {seq_name} → {max_val}')
+                        print(f'Reset: {seq_name} → {max_val}')
                     except Exception as e:
-                        print(f'⚠️  Skip {seq_name}: {e}')
+                        print(f'Skip {seq_name}: {e}')
 
-            print("✅ SEQUENCE RESET COMPLETED!")
+            print("SEQUENCE RESET COMPLETED!")
         except Exception as e:
-            print(f"❌ ERROR: {e}")
+            print(f"ERROR: {e}")
             import traceback
             traceback.print_exc()
             raise
