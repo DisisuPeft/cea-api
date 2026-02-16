@@ -51,7 +51,7 @@ DEBUG = getenv("DEBUG", "False") == "True"
 # ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "cea-api-production-004f.up.railway.app"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 # RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 # if RENDER_EXTERNAL_HOSTNAME:
 #     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
@@ -164,9 +164,9 @@ WSGI_APPLICATION = "school_admin.wsgi.application"
 # DATABASES = {
 #      "default": {
 #          "ENGINE": "django.db.backends.mysql",
-#          "NAME": "cea_db",
-#          "USER": "admin",
-#          "PASSWORD": "@dm1n2026",
+#          "NAME": "unsza_db",
+#          "USER": "root",
+#          "PASSWORD": "",
 #          "HOST": "localhost",
 #          "PORT": "3306",
 #      }
