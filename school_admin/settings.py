@@ -164,9 +164,9 @@ WSGI_APPLICATION = "school_admin.wsgi.application"
 # DATABASES = {
 #      "default": {
 #          "ENGINE": "django.db.backends.mysql",
-#          "NAME": "unsza_db",
-#          "USER": "root",
-#          "PASSWORD": "",
+#          "NAME": "cea_db",
+#          "USER": "admin",
+#          "PASSWORD": "@dm1n2026",
 #          "HOST": "localhost",
 #          "PORT": "3306",
 #      }

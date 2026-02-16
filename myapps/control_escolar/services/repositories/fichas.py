@@ -28,3 +28,24 @@ class FichasService:
             # print(f"type{result}")
 
             return fetch_all_parser(cursor)
+
+    @staticmethod
+    def get_fichas_total_amount(user_id,  fecha_inicio, fecha_fin):
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT *
+                FROM control_escolar_comisiones c
+                INNER JOIN control_escolar_fichas f ON c.ficha_id = f.id
+                WHERE f.autorizado = 1
+                AND f.vendedor_id = %s
+                AND c.fecha_creacion BETWEEN %s AND %s
+            """, [user_id, fecha_inicio, fecha_fin])
+
+            return fetch_all_parser(cursor)
+
+#                 SELECT SUM(c.monto) as total
+#                 FROM control_escolar_comisiones c
+#                 INNER JOIN control_escolar_fichas f ON c.ficha_id = f.id
+#                 WHERE f.vendedor_id = %s
+#                 AND c.fecha_creacion BETWEEN %s AND %s
+#                 AND f.autorizado = %s

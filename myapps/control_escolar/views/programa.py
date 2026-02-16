@@ -18,7 +18,7 @@ from myapps.control_escolar.services.repositories.fichas import FichasService
 from myapps.crm.models import CampaniaPrograma
 from myapps.estudiantes.models import Estudiante, estudiante
 from django.utils import timezone
-from myapps.control_escolar.services import PagoService
+from myapps.control_escolar.services import PagoService, ProgramaService
 from myapps.control_escolar.serializer import ProgramaEducativoSerializer
 from rest_framework.decorators import action
 from myapps.perfil.models import User as Profile
@@ -277,12 +277,24 @@ class InscripcionModelViewSet(ModelViewSet):
 
     @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated, HasRoleWithRoles(["Administrador" ,"Vendedor"])])
     def fichas(self, request):
-        service = FichasService.get_fichas(request.user.id)
-        return Response(service, status=status.HTTP_200_OK)
+        fecha_inicio = request.query_params.get('fecha_inicio')
+        fecha_final = request.query_params.get('fecha_final')
+
+        fichas = FichasService.get_fichas(request.user.id)
+        total_comision = FichasService.get_fichas_total_amount(request.user.id, fecha_inicio=fecha_inicio, fecha_fin=fecha_final)
+        return Response({'fichas': fichas, 'totalComision': total_comision}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'],
+            permission_classes=[IsAuthenticated, HasRoleWithRoles(['Administrador', "Tutor"])])
+    def programas_inscripcion(self, request):
+        estudiante_id = request.query_params.get('identificador')
+        programas = ProgramaService.get_programa_inscripcion(int(estudiante_id))
+        return Response(programas, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['PATCH'], permission_classes=[IsAuthenticated, HasRoleWithRoles(['Administrador' ,"Tutor"])])
     def autorizar_ficha(self, request):
         switch_value = request.data.get('value')
+        # print(switch_value)
         id_str = request.query_params.get('identificador')
         id_ficha = request.query_params.get('ficha')
 
@@ -312,11 +324,12 @@ class InscripcionModelViewSet(ModelViewSet):
         ficha = Fichas.objects.get(id=ficha_int)
         # Obtener estudiante
         estudiante = get_object_or_404(Estudiante, id=id_int)
-
+        perfil = Profile.objects.filter(estudiante=estudiante).first()
         # Crear usuario
         user = UserCustomize.objects.create(email=estudiante.email)
-        user.profile = estudiante.perfil
-
+        # user.profile = estudiante.perfil
+        perfil.user = user
+        perfil.save()
         # Asignar rol
         try:
             role = Roles.objects.get(name="Estudiante")
@@ -332,6 +345,7 @@ class InscripcionModelViewSet(ModelViewSet):
         user.save()  # ← No olvides guardar
         estudiante.activo = 1
         ficha.autorizado = 1
+        ficha.autorizado_by = request.user
         ficha.save()
         estudiante.save()
         return Response(
@@ -350,3 +364,5 @@ class GetProgramasEstudianteView(APIView):
            return Response("No query found", status=status.HTTP_404_NOT_FOUND)
         serializer = ProgramaEducativoSerializer(programs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+

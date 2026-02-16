@@ -40,22 +40,41 @@ class ManageUsersview(APIView):
         
         user = request.user
         
-        q_raw = request.GET.get("q") 
-        
+        q_raw = request.GET.get("q")
+        estatus_raw = request.GET.get("estatus")
+        diplomado_raw = request.GET.get("diplomado")
+        print(diplomado_raw)
         q = (q_raw or "").strip()
-        
+        estatus = (estatus_raw or "").strip()
+        diplomado = (diplomado_raw or "").strip()
+
         if q.lower() in {"null", "undefined", "none", "nan"}:
             q = ""
-                
+
+        if estatus.lower() in {"null", "undefined", "none", "nan", "99"}:
+            estatus = ""
+
+        if diplomado.lower() in {"null", "undefined", "none", "nan", "99"}:
+            diplomado = ""
+
         queryset = (
-            Estudiante.objects.exclude(perfil__user_id=user.id).select_related("perfil", "lugar_nacimiento", "municipio").order_by("perfil__nombre", "id")
+            Estudiante.objects.exclude(perfil__user_id=user.id).select_related("perfil", "lugar_nacimiento", "municipio").prefetch_related("inscripcion").order_by("perfil__nombre", "id")
         )
 
         if q:
             queryset = queryset.filter(
                 Q(perfil__nombre__icontains=q) | Q(perfil__apellidoP__icontains=q) | Q(perfil__apellidoM__icontains=q)
             )
-        
+
+        if estatus:
+            queryset = queryset.filter(
+                Q(activo=estatus)
+            )
+
+        if diplomado:
+            queryset = queryset.filter(
+                Q(inscripcion__campania_programa__programa_id=diplomado)
+            )
   
         paginator = UsersPagination()
 

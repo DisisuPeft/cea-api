@@ -96,7 +96,7 @@ class GetProgramaView(APIView):
     
 class GetProgramasView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Tutor"]),  IsAuthenticated]
     
     def get(self, request):
         programs = ProgramaEducativo.objects.filter(activo=1)
