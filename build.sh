@@ -7,7 +7,7 @@
 
 # 2. Ejecutar migraciones
 # python manage.py makemigrations --noinput
-# python manage.py migrate --noinput
+ python manage.py migrate --noinput
 
 # 3. Recolectar estáticos
-# python manage.py collectstatic --noinput
+ python manage.py collectstatic --noinput
