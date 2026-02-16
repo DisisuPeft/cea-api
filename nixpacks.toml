@@ -16,10 +16,5 @@ cmds = [
 #  "python manage.py migrate --noinput"
 ]
 
-[phases.release]
-cmds = [
-  ". /opt/venv/bin/activate && python manage.py migrate --noinput"
-]
-
 [start]
-cmd = ". /opt/venv/bin/activate && gunicorn school_admin.wsgi:application --bind 0.0.0.0:${PORT}"
+cmd = ". /opt/venv/bin/activate && python manage.py migrate --noinput && gunicorn school_admin.wsgi:application --bind 0.0.0.0:${PORT}"
