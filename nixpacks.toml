@@ -17,5 +17,5 @@ cmds = [
 ]
 
 [start]
-cmd = ". /opt/venv/bin/activate && python manage.py migrate --noinput && gunicorn school_admin.wsgi:application --bind 0.0.0.0:${PORT}"
+cmd = ". /opt/venv/bin/activate && python manage.py migrate --noinput && python manage.py reset_sequences && gunicorn school_admin.wsgi:application --bind 0.0.0.0:${PORT}"
 #&& python manage.py reset_sequences

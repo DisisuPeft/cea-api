@@ -36,6 +36,23 @@ class Command(BaseCommand):
                     except Exception as e:
                         print(f'Skip {seq_name}: {e}')
 
+                problematic_tables = ['perfil_user']
+                for table_name in problematic_tables:
+                    try:
+                        cursor.execute(f"SELECT MAX(id) FROM {table_name}")
+                        max_id = cursor.fetchone()[0] or 0
+
+                        cursor.execute(f"""
+                            SELECT setval(
+                                pg_get_serial_sequence('{table_name}', 'id'),
+                                {max(max_id, 1)},
+                                true
+                            );
+                        """)
+                        print(f'Manual reset: {table_name} → {max_id}')
+                    except Exception as e:
+                        print(f'Skip {table_name}: {e}')
+
             print("SEQUENCE RESET COMPLETED!")
         except Exception as e:
             print(f"ERROR: {e}")
