@@ -275,7 +275,7 @@ class InscripcionModelViewSet(ModelViewSet):
         else:
             return Response({'detail': 'Este email ya se encuentra registrado en el sistema'}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated, HasRoleWithRoles(["Administrador" ,"Vendedor"])])
+    @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated, HasRoleWithRoles(["Administrador" ,"Vendedor", "Tutor"])])
     def fichas(self, request):
         fecha_inicio = request.query_params.get('fecha_inicio')
         fecha_final = request.query_params.get('fecha_final')
