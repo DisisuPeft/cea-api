@@ -25,7 +25,7 @@ from myapps.crm.services import CampaniaProgramaService
 class CampaniaViewSet(ModelViewSet):
     queryset = CampaniaPrograma.objects.all()
     serializer_class = CampaniaProgramaSerializer
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante", "Tutor"]), EsAutorORolPermitidoConRoles(["Administrador"])]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Estudiante", "Tutor"]), EsAutorORolPermitidoConRoles(["Administrador", "Tutor"])]
     authentication_classes = [CustomJWTAuthentication]
     
     
