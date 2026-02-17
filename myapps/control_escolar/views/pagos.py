@@ -31,7 +31,7 @@ from myapps.control_escolar.serializer import PagoSerializer, TipoPagoSerializer
 class TipoPagoViewSet(ModelViewSet):
     queryset = TipoPago.objects.all()
     serializer_class = TipoPagoSerializer
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"]), EsOwnerORolPermitido]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor", "Tutor"]), EsOwnerORolPermitido]
     authentication_classes = [CustomJWTAuthentication]
     
 
@@ -42,7 +42,7 @@ class TipoPagoViewSet(ModelViewSet):
             
 class PagosModelViewSet(ModelViewSet):
     serializer_class = EstudianteConInscripcionesSerializer
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"]), EsOwnerORolPermitido]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Tutor"]), EsOwnerORolPermitido]
     authentication_classes = [CustomJWTAuthentication]
     
     def get_queryset(self):

@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 # Create your views here.
 
 class ManageUsersview(APIView):
-    permission_classes = [HasRoleWithRoles(["Administrador"]), IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Tutor"]), IsAuthenticated]
     authentication_classes = [CustomJWTAuthentication]
     
     def get(self, request, *args, **kwargs):

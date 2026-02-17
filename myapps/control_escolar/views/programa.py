@@ -65,7 +65,7 @@ class ProgramaViewSet(ModelViewSet):
 class InscripcionModelViewSet(ModelViewSet):
     queryset = Inscripcion.objects.select_related('campania_programa', 'estudiante').prefetch_related('pagos').all()
     serializer_class = InscripcionSerializer
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador"]), EsOwnerORolPermitido]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Tutor"]), EsOwnerORolPermitido]
     authentication_classes = [CustomJWTAuthentication]
     
     def get_queryset(self):
