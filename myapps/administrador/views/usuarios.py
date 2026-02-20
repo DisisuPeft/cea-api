@@ -133,7 +133,7 @@ class EditUsersAdministrador(APIView):
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)         
 
 class RolesView(APIView):
-    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Tutor"]),  IsAuthenticated]
     authentication_classes = [CustomJWTAuthentication]
     
     def get(self, request):
