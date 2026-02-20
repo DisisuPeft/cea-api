@@ -20,7 +20,7 @@ from myapps.catalogos.models import MetodoPago
 
 class EstadosRepublicaView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante", "Tutor"]),  IsAuthenticated]
     
     def get(self, request, *args, **kwargs):
         entidades = EstadosRepublica.objects.all()
@@ -32,7 +32,7 @@ class EstadosRepublicaView(APIView):
 
 class MunicipioView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante", "Tutor"]),  IsAuthenticated]
     
     def get(self, request, id):
         # entidad_id = request.GET.get('id')
@@ -47,7 +47,7 @@ class MunicipioView(APIView):
     
 class EspecialidadView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Tutor"]),  IsAuthenticated]
     
     def get(self, request):
         especialidades = Especialidades.objects.all()
@@ -58,7 +58,7 @@ class EspecialidadView(APIView):
     
 class EstatusView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Tutor"]),  IsAuthenticated]
     
     def get(self, request):
         estatus_maestro = EstatusMaestro.objects.all()
@@ -72,7 +72,7 @@ class EstatusView(APIView):
 class MetodoPagoModelViewSet(ModelViewSet):
     queryset = MetodoPago.objects.all().only('id', 'nombre')
     serializer_class = MetodoPagoSerializer
-    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor"]), EsOwnerORolPermitido]
+    permission_classes = [IsAuthenticated, HasRoleWithRoles(["Administrador", "Vendedor", "Tutor"]), EsOwnerORolPermitido]
     authentication_classes = [CustomJWTAuthentication]
     
     

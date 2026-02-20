@@ -17,7 +17,7 @@ from myapps.authentication.models import (Roles)
 
 class NivelesEducativosView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante", "Tutor"]),  IsAuthenticated]
     def get(self, request, *args, **kwargs):
         niveles = NivelEducativo.objects.all()
         if not niveles:

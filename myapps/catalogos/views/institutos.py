@@ -17,7 +17,7 @@ from rest_framework.viewsets import ModelViewSet
 class InstitutosModelViewSet(ModelViewSet):
     queryset = InstitucionAcademica.objects.all()
     serializer_class = InstitucionSerializarGeneric
-    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante"]),  IsAuthenticated]
+    permission_classes = [HasRoleWithRoles(["Administrador", "Estudiante", "Tutor"]),  IsAuthenticated]
     authentication_classes = [CustomJWTAuthentication]
     
     def get_queryset(self):
